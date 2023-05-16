@@ -71,39 +71,11 @@ export default class Input {
         mc.add(new Hammer.Tap())
         mc.add(new Hammer.Pinch({ threshold: 0}))
         mc.get('pinch').set({ enable: true })
-        
         if (Utils.isMobile) mc.add(new Hammer.Press())
 
-        mc.on('tap', event => {
-            if (!Utils.isMobile) return
-                
-            this.calcOffset()
-            this.emitCursorCoord(event, { mode: 'aim' })
-            this.simulateClick(event)
-            
-            if (this.fade) this.fade.stop()
-
-            this.events.emit('cursor-changed', {
-                mode: 'explore'
-            })
-            this.events.emitSpec(this.rrId, 'update-rr')
-            })
-        
-        mc.on('press', event => {
-            if (!Utils.isMobile) return
-
-            this.calcOffset()
-            this.emitCursorCoord(event, { mode: 'aim' })
-            this.simulateMousedown(event)
-            // if (this.fade) this.fade.stop()
-
-            this.events.emitSpec(this.rrId, 'update-rr')
-        })
-
         mc.on('panstart', event => {
-            console.log("x")
-            console.log(this.props.cursor.scroll_lock)
-            // if(this.props.cursor.scroll_lock) return
+            // alert("Panstart")
+            // console.log(this.props.cursor.scroll_lock)
             if (this.cursor.mode === 'aim') {
                 return this.emitCursorCoord(event)
             }
@@ -130,15 +102,14 @@ export default class Input {
         })
 
         mc.on('panmove', event => {
+            // alert("panmove")
             if (Utils.isMobile) {
                 this.calcOffset()
-                this.emitCursorCoord(event, { mode: 'aim' })
-                this.simulateMousemove(event)
+                this.propagate('mousemove', this.touch2mouse(event))
             }
-
-            // if (this.fade) this.fade.stop()
-            if (this.props.cursor.scroll_lock) return
-            if (true) {
+            // if (this.props.cursor.scroll_lock) return
+            // alert(this.drug)
+            if (!this.props.cursor.scroll_lock) {
                 this.mousedrag(
                     this.drug.x + event.deltaX,
                     this.drug.y + event.deltaY,
@@ -151,46 +122,93 @@ export default class Input {
             } else if (this.cursor.mode === 'aim') {
                 this.emitCursorCoord(event)
             }
-
-            this.events.emitSpec(this.rrId, 'update-rr')
         })
 
         mc.on('panend', event => {
+            this.simMouseup(event)
+            if (Utils.isMobile && this.drug) {
+                this.panFade(event)
+            }
+            this.drug = null
+            this.events.emit('cursor-locked', false)
+        })
+
+        mc.on('tap', event => {
+        // mc.on("touchstart", event => {
+            // alert("touchstart")
             if (!Utils.isMobile) return
-
-            // this.calcOffset()
-            // this.emitCursorCoord(event, { mode: 'aim' })
-            this.simulateMouseup(event)
-            // if (this.fade) this.fade.stop()
-
+            this.calcOffset()
+            this.simMousedown(event)
+            if (this.fade) this.fade.stop()
+            this.emitCursorCoord(event, { mode: 'aim' })
+            // this.events.emit('cursor-changed', {})
+            this.events.emit('cursor-changed', {
+                mode: 'explore'
+            })
             this.events.emitSpec(this.rrId, 'update-rr')
         })
 
-        
+        mc.on("touchend", event => {
+            alert("touchend")
+            if (!Utils.isMobile) return
+            this.simMouseup(event)
+            if (this.fade) this.fade.stop()
+            // this.events.emit('cursor-changed', {})
+            this.events.emit('cursor-changed', {
+                mode: 'explore'
+            })
+            this.events.emitSpec(this.rrId, 'update-rr')
+        })
+
+        mc.on("touchmove", event => {
+            return
+            if (!Utils.isMobile) return
+            this.simMousemove(event)
+            // if (this.fade) this.fade.stop()
+            this.events.emit('cursor-changed', {})
+            this.events.emit('cursor-changed', {
+                mode: 'explore'
+            })
+            this.events.emitSpec(this.rrId, 'update-rr')
+        })
+
+        mc.on('pinchstart', () =>  {
+            this.drug = null
+            this.pinch = {
+                t: this.range[1] - this.range[0],
+                r: this.range.slice()
+            }
+        })
+
+        mc.on('pinchend', () =>  {
+            this.pinch = null
+        })
+
+        mc.on('pinch', event => {
+            if (this.pinch) this.pinchZoom(event.scale)
+        })
+
+        mc.on('press', event => {
+            if (!Utils.isMobile) return
+            this.propagate('click', this.touch2mouse(event))
+            this.simMousedown(event)
+            // if (this.fade) this.fade.stop()
+            this.calcOffset()
+            this.emitCursorCoord(event, { mode: 'aim' })
+            setTimeout(() => this.events.emitSpec(this.rrId, 'update-rr'))
+            this.simMousedown(event)
+        })
+
         // TODO: Add only once?
         let add = this.canvas.addEventListener
         add("gesturestart", this.gesturestart)
         add("gesturechange", this.gesturechange)
         add("gestureend", this.gestureend)
-
     }
 
     gesturestart(event) { event.preventDefault() }
     gesturechange(event) { event.preventDefault() }
     gestureend(event) { event.preventDefault() }
-
-    click(event) {
-        if (Utils.isMobile) return
-        console.log("click")
-        this.events.emit("click", event)
-        this.propagate('click', event)
-    }
-
-    simulateClick(event) {
-        console.log("sim click")
-        this.events.emit("click", this.touch2mouse(event))
-        this.propagate('click', this.touch2mouse(event))
-    }
 
     mousemove(event) {
         if (Utils.isMobile) return
@@ -203,11 +221,6 @@ export default class Input {
         this.calcOffset()
         this.propagate('mousemove', event)
     }
-    simulateMousemove(event) {
-        console.log("sim mousemove")
-        this.events.emit("mousemove", this.touch2mouse(event))
-        this.propagate('mousemove', this.touch2mouse(event))
-    }
 
     mouseout(event) {
         if (Utils.isMobile) return
@@ -216,71 +229,108 @@ export default class Input {
     }
 
     mouseup(event) {
-        if (Utils.isMobile) return
         this.drug = null
         this.events.emit('cursor-locked', false)
         this.propagate('mouseup', event)
     }
-    simulateMouseup(event) {
-        console.log("sim mouseup")
-        this.events.emit("mouseup", this.touch2mouse(event))
-        this.propagate('mouseup', this.touch2mouse(event))
-    }
-    
 
     mousedown(event) {
+        console.log(event)
         if (Utils.isMobile) return
         this.propagate('mousedown', event)
         if (event.defaultPrevented) return
         this.events.emit('grid-mousedown', [this.gridId, event])
     }
 
-    simulateMousedown(event) {
-        console.log("sim mousedown")
-        this.events.emit("mousedown", this.touch2mouse(event))
+    // Simulated mousedown (for mobile)
+   simMousedown(event) {
+        if (event.srcEvent.defaultPrevented) return
+        this.events.emit('grid-mousedown', [this.gridId, event])
+        // this.propagate('mousemove', this.touch2mouse(event))
+        this.events.emitSpec(this.rrId, 'update-rr')
         this.propagate('mousedown', this.touch2mouse(event))
+        setTimeout(() => {
+            this.propagate('click', this.touch2mouse(event))
+        })
+   }
+
+    // Simulated mouseup (for mobile)
+    simMouseup(event) {
+        // if (event.srcEvent.defaultPrevented) return
+        this.events.emit('grid-mouseup', [this.gridId, event])
+        // this.propagate('mousemove', this.touch2mouse(event))
+        this.events.emitSpec(this.rrId, 'update-rr')
+        this.propagate('mouseup', this.touch2mouse(event))
+        // setTimeout(() => {
+        //     this.propagate('click', this.touch2mouse(event))
+        // })
     }
 
-    mousedrag(x, y) {
-
-        let dt = this.drug.t * (this.drug.x - x) / this.layout.width
-        let d$ = this.layout.$hi - this.layout.$lo
-        d$ *= (this.drug.y - y) / this.layout.height
-        let offset = this.drug.o + d$
-        let ls = this.layout.settings.logScale
-
-        if (ls && this.drug.y_r) {
-            let dy = this.drug.y - y
-            var range = this.drug.y_r.slice()
-            range[0] = math.exp((0 - this.drug.B + dy) /
-                this.layout.A)
-            range[1] = math.exp(
-                (this.layout.height - this.drug.B + dy) /
-                this.layout.A)
-        }
-
-        let scaleId = this.layout.scaleIndex
-        let yTransform = this.meta.getYtransform(this.gridId, scaleId)
-        if (this.drug.y_r && yTransform &&
-            !yTransform.auto) {
-            this.events.emit('sidebar-transform', {
-                gridId: this.gridId,
-                scaleId: scaleId,
-                range: ls ? (range || this.drug.y_r) : [
-                    this.drug.y_r[0] - offset,
-                    this.drug.y_r[1] - offset,
-                ]
-            })
-        }
-
-        this.range[0] = this.drug.r[0] + dt
-        this.range[1] = this.drug.r[1] + dt
-
-        this.changeRange()
-
+    // Simulated mouseup (for mobile)
+    simMousemove(event) {
+        if (event.srcEvent.defaultPrevented) return
+        // this.events.emit('grid-mousemove', [this.gridId, event])
+        this.propagate('mousemove', this.touch2mouse(event))
+        this.events.emitSpec(this.rrId, 'update-rr')
+        // this.propagate('mousemove', this.touch2mouse(event))
+        // setTimeout(() => {
+        //     this.propagate('click', this.touch2mouse(event))
+        // })
     }
 
-    mousezoom(delta, event) {
+   // Convert touch to "mouse" event
+   touch2mouse(e) {
+       this.calcOffset()
+       return {
+           original: e.srcEvent,
+           layerX: e.center.x + this.offsetX,
+           layerY: e.center.y + this.offsetY,
+           preventDefault: function() {
+               this.original.preventDefault()
+           }
+       }
+   }
+
+   click(event) {
+        console.log("click")
+        this.events.emit("click", event)
+
+        this.propagate('click', event)
+   }
+
+   emitCursorCoord(event, add = {}) {
+       this.events.emit('cursor-changed', Object.assign({
+           gridId: this.gridId,
+           x: event.center.x + this.offsetX,
+           y: event.center.y + this.offsetY //+ this.layout.offset
+       }, add))
+   }
+
+   panFade(event) {
+       let dt = Utils.now() - this.drug.t0
+       let dx = this.range[1] - this.drug.r[1]
+       let v = 42 * dx / dt
+       let v0 = Math.abs(v * 0.01)
+       if (dt > 500) return
+       if (this.fade) this.fade.stop()
+       this.fade = new FrameAnimation(self => {
+           v *= 0.85
+           if (Math.abs(v) < v0) {
+               self.stop()
+           }
+           this.range[0] += v
+           this.range[1] += v
+           this.changeRange()
+       })
+   }
+
+   calcOffset() {
+       let rect = this.canvas.getBoundingClientRect()
+       this.offsetX = -rect.x
+       this.offsetY = -rect.y
+   }
+
+   mousezoom(delta, event) {
 
         // TODO: for mobile
         if (this.wmode !== 'pass') {
@@ -345,6 +395,45 @@ export default class Input {
 
     }
 
+    mousedrag(x, y) {
+
+        let dt = this.drug.t * (this.drug.x - x) / this.layout.width
+        let d$ = this.layout.$hi - this.layout.$lo
+        d$ *= (this.drug.y - y) / this.layout.height
+        let offset = this.drug.o + d$
+        let ls = this.layout.settings.logScale
+
+        if (ls && this.drug.y_r) {
+            let dy = this.drug.y - y
+            var range = this.drug.y_r.slice()
+            range[0] = math.exp((0 - this.drug.B + dy) /
+                this.layout.A)
+            range[1] = math.exp(
+                (this.layout.height - this.drug.B + dy) /
+                this.layout.A)
+        }
+
+        let scaleId = this.layout.scaleIndex
+        let yTransform = this.meta.getYtransform(this.gridId, scaleId)
+        if (this.drug.y_r && yTransform &&
+            !yTransform.auto) {
+            this.events.emit('sidebar-transform', {
+                gridId: this.gridId,
+                scaleId: scaleId,
+                range: ls ? (range || this.drug.y_r) : [
+                    this.drug.y_r[0] - offset,
+                    this.drug.y_r[1] - offset,
+                ]
+            })
+        }
+
+        this.range[0] = this.drug.r[0] + dt
+        this.range[1] = this.drug.r[1] + dt
+
+        this.changeRange()
+
+    }
+
     pinchZoom(scale) {
 
         let data = this.hub.mainOv.dataSubset
@@ -373,35 +462,6 @@ export default class Input {
 
 
     }
-
-    
-    calcOffset() {
-        let rect = this.canvas.getBoundingClientRect()
-        this.offsetX = -rect.x
-        this.offsetY = -rect.y
-    }
-
-    // Convert touch to "mouse" event
-    touch2mouse(e) {
-        this.calcOffset()
-        return {
-            original: e.srcEvent,
-            layerX: e.center.x + this.offsetX,
-            layerY: e.center.y + this.offsetY,
-            preventDefault: function() {
-                this.original.preventDefault()
-            }
-        }
-    }
-
-    emitCursorCoord(event, add = {}) {
-        this.events.emit('cursor-changed', Object.assign({
-            gridId: this.gridId,
-            x: event.center.x + this.offsetX,
-            y: event.center.y + this.offsetY //+ this.layout.offset
-        }, add))
-    }
-
 
     changeRange() {
 
@@ -433,6 +493,7 @@ export default class Input {
         this.events.emit('range-changed', range)
     }
 
+    // Propagate mouse event to overlays
     propagate(name, event) {
         this.events.emitSpec(this.gridUpdId, 'propagate', {
             name, event
