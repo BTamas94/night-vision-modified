@@ -4925,6 +4925,25 @@ class Layer {
     this.display = (_a = this.ovSrc.settings.display) != null ? _a : true;
   }
 }
+class FrameAnimation {
+  constructor(cb) {
+    this.t0 = this.t = Utils.now();
+    this.id = setInterval(() => {
+      if (Utils.now() - this.t > 100)
+        return;
+      if (Utils.now() - this.t0 > 1200) {
+        this.stop();
+      }
+      if (this.id)
+        cb(this);
+      this.t = Utils.now();
+    }, 16);
+  }
+  stop() {
+    clearInterval(this.id);
+    this.id = null;
+  }
+}
 class Input {
   async setup(comp) {
     this.MIN_ZOOM = comp.props.config.MIN_ZOOM;
@@ -5022,6 +5041,8 @@ class Input {
         this.emitCursorCoord(event, { mode: "aim" });
         this.simulateMousemove(event);
       }
+      if (this.fade)
+        this.fade.stop();
       if (this.props.cursor.scroll_lock)
         return;
       {
@@ -5035,7 +5056,13 @@ class Input {
     mc.on("panend", (event) => {
       if (!Utils.isMobile)
         return;
+      this.calcOffset();
+      this.emitCursorCoord(event, { mode: "aim" });
       this.simulateMouseup(event);
+      if (this.drug) {
+        this.panFade(event);
+        this.drug = null;
+      }
       this.events.emitSpec(this.rrId, "update-rr");
     });
     mc.on("pinchstart", () => {
@@ -5249,6 +5276,25 @@ class Input {
       x: event.center.x + this.offsetX,
       y: event.center.y + this.offsetY
     }, add));
+  }
+  panFade(event) {
+    let dt = Utils.now() - this.drug.t0;
+    let dx = this.range[1] - this.drug.r[1];
+    let v = 42 * dx / dt;
+    let v0 = Math.abs(v * 0.01);
+    if (dt > 500)
+      return;
+    if (this.fade)
+      this.fade.stop();
+    this.fade = new FrameAnimation((self) => {
+      v *= 0.85;
+      if (Math.abs(v) < v0) {
+        self.stop();
+      }
+      this.range[0] += v;
+      this.range[1] += v;
+      this.changeRange();
+    });
   }
   changeRange() {
     let data2 = this.hub.mainOv.data;

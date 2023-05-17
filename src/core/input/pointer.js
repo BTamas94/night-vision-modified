@@ -134,7 +134,7 @@ export default class Input {
                 this.simulateMousemove(event)
             }
 
-            // if (this.fade) this.fade.stop()
+            if (this.fade) this.fade.stop()
             if (this.props.cursor.scroll_lock) return
             if (true) {
                 this.mousedrag(
@@ -152,10 +152,13 @@ export default class Input {
         mc.on('panend', event => {
             if (!Utils.isMobile) return
 
-            // this.calcOffset()
-            // this.emitCursorCoord(event, { mode: 'aim' })
+            this.calcOffset()
+            this.emitCursorCoord(event, { mode: 'aim' })
             this.simulateMouseup(event)
-            // if (this.fade) this.fade.stop()
+            if(this.drug) {
+                this.panFade(event)
+                this.drug = null
+            }
 
             this.events.emitSpec(this.rrId, 'update-rr')
         })
@@ -412,6 +415,23 @@ export default class Input {
         }, add))
     }
 
+    panFade(event) {
+        let dt = Utils.now() - this.drug.t0
+        let dx = this.range[1] - this.drug.r[1]
+        let v = 42 * dx / dt
+        let v0 = Math.abs(v * 0.01)
+        if (dt > 500) return
+        if (this.fade) this.fade.stop()
+        this.fade = new FrameAnimation(self => {
+            v *= 0.85
+            if (Math.abs(v) < v0) {
+                self.stop()
+            }
+            this.range[0] += v
+            this.range[1] += v
+            this.changeRange()
+        })
+    }
 
     changeRange() {
 
