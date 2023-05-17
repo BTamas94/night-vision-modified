@@ -101,9 +101,7 @@ export default class Input {
         })
 
         mc.on('panstart', event => {
-            console.log("x")
-            console.log(this.props.cursor.scroll_lock)
-            // if(this.props.cursor.scroll_lock) return
+
             if (this.cursor.mode === 'aim') {
                 return this.emitCursorCoord(event)
             }
@@ -121,7 +119,7 @@ export default class Input {
                 B: this.layout.B,
                 t0: Utils.now()
             }
-            // this.events.emit('cursor-locked', true)
+
             this.events.emit('cursor-changed', {
                 gridId: this.gridId,
                 x: event.center.x + this.offsetX,
@@ -143,11 +141,7 @@ export default class Input {
                     this.drug.x + event.deltaX,
                     this.drug.y + event.deltaY,
                 )
-                /*this.events.emit('cursor-changed', {
-                    gridId: this.gridId,
-                    x: event.center.x + this.offsetX,
-                    y: event.center.y + this.offsetY
-                })*/
+                
             } else if (this.cursor.mode === 'aim') {
                 this.emitCursorCoord(event)
             }
@@ -164,6 +158,22 @@ export default class Input {
             // if (this.fade) this.fade.stop()
 
             this.events.emitSpec(this.rrId, 'update-rr')
+        })
+
+        mc.on('pinchstart', () =>  {
+            this.drug = null
+            this.pinch = {
+                t: this.range[1] - this.range[0],
+                r: this.range.slice()
+            }
+        })
+
+        mc.on('pinchend', () =>  {
+            this.pinch = null
+        })
+
+        mc.on('pinch', event => {
+            if (this.pinch) this.pinchZoom(event.scale)
         })
 
         

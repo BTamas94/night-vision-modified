@@ -4995,8 +4995,6 @@ class Input {
       this.events.emitSpec(this.rrId, "update-rr");
     });
     mc.on("panstart", (event) => {
-      console.log("x");
-      console.log(this.props.cursor.scroll_lock);
       if (this.cursor.mode === "aim") {
         return this.emitCursorCoord(event);
       }
@@ -5039,6 +5037,20 @@ class Input {
         return;
       this.simulateMouseup(event);
       this.events.emitSpec(this.rrId, "update-rr");
+    });
+    mc.on("pinchstart", () => {
+      this.drug = null;
+      this.pinch = {
+        t: this.range[1] - this.range[0],
+        r: this.range.slice()
+      };
+    });
+    mc.on("pinchend", () => {
+      this.pinch = null;
+    });
+    mc.on("pinch", (event) => {
+      if (this.pinch)
+        this.pinchZoom(event.scale);
     });
     let add = this.canvas.addEventListener;
     add("gesturestart", this.gesturestart);
