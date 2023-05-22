@@ -71,7 +71,7 @@ export default function Scale(id, src, specs) {
         // set of overlays (on the same scale)
         var hi = -Infinity, lo = Infinity
         for (var ov of ovs) {
-            if (ov.settings.display === false || ov.settings.dontScale == true) continue
+            if (ov.settings.display === false) continue
             let yfn = (meta.yRangeFns[gridId] || [])[ov.id]
             let data = ov.dataSubset
             // Intermediate hi & lo
@@ -103,7 +103,6 @@ export default function Scale(id, src, specs) {
             // maximum & minimum over all overlays
             if (h > hi) hi = h
             if (l < lo) lo = l
-            break
         }
 
         // Fixed y-range in non-auto mode

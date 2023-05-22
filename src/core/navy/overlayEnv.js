@@ -17,8 +17,10 @@ import volumeBar from '../primitives/navyLib/volumeBar.js'
 import Volbar from '../primitives/navyLib/volbar.js'
 import layoutCnv from '../primitives/navyLib/layoutCnvFast.js'
 import avgVolume from '../primitives/navyLib/avgVolume.js'
+import roundRect from '../primitives/navyLib/roundRect.js'
+import drawArrow from '../primitives/navyLib/arrow.js'
 import {
-    fastSma, candleColor
+    fastSma, candleColor, rescaleFont
 } from '../primitives/navyLib/helperFns.js'
 
 const formatCash = Utils.formatCash
@@ -36,6 +38,7 @@ export default class OverlayEnv {
         this.ovSrc = ovSrc
         this.overlay = null // Overlay instance ref
         this.id = id
+        this.handlers = {}
 
         this.$core = { hub, meta, scan }
         this.update(ovSrc, layout, props)
@@ -46,7 +49,9 @@ export default class OverlayEnv {
         this.lib = {
             Candle, Volbar, layoutCnv, formatCash,
             candleBody, candleWick, volumeBar,
-            fastSma, avgVolume, candleColor
+            fastSma, avgVolume, candleColor, 
+            roundRect, rescaleFont, drawArrow,
+            Utils
         }
 
     }
@@ -107,5 +112,46 @@ export default class OverlayEnv {
                 return i
             }
         }
+    }
+
+    watchProp(propName, handler) {
+        // Save the handler
+        this.handlers[propName] = this.handlers[propName] || []
+        this.handlers[propName].push(handler)
+
+        // Save the current property value
+        let oldValue = this.$props[propName]
+
+        // Remove the property from $props
+        delete this.$props[propName]
+
+        // Redefine the property with custom setter
+        Object.defineProperty(this.$props, propName, {
+            get: () => oldValue,
+            set: (newValue) => {
+                let tmp = oldValue
+                oldValue = newValue
+
+                // Call all handlers
+                for (let handler of this.handlers[propName]) {
+                    handler(newValue, tmp)
+                }
+            },
+            enumerable: true,
+            configurable: true
+        })
+    }
+
+    destroy() {
+
+        // Restore non-reactive properties
+        for (let prop in this.handlers) {
+            let value = this.$props[prop]
+            delete this.$props[prop]
+            this.$props[prop] = value
+        }
+
+        // Clear all handlers
+        this.handlers = {}
     }
 }

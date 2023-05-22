@@ -238,6 +238,7 @@
     const previous = (node.style.animation || "").split(", ");
     const next = previous.filter(
       name ? (anim) => anim.indexOf(name) < 0 : (anim) => anim.indexOf("__svelte") === -1
+      // remove all Svelte animations
     );
     const deleted = previous.length - next.length;
     if (deleted) {
@@ -367,6 +368,7 @@
       r: 0,
       c: [],
       p: outros
+      // parent group
     };
   }
   function check_outros() {
@@ -538,16 +540,19 @@
     const $$ = component.$$ = {
       fragment: null,
       ctx: [],
+      // state
       props,
       update: noop,
       not_equal,
       bound: blank_object(),
+      // lifecycle
       on_mount: [],
       on_destroy: [],
       on_disconnect: [],
       before_update: [],
       after_update: [],
       context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+      // everything else
       callbacks: blank_object(),
       dirty,
       skip_bound: false,
@@ -609,15 +614,25 @@
       }
     }
   }
+  function getDefaultExportFromCjs(x) {
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+  }
   var util$1 = {};
   function isArrayLike(o) {
-    if (o && typeof o === "object" && isFinite(o.length) && o.length >= 0 && o.length === Math.floor(o.length) && o.length < 4294967296)
+    if (o && // o is not null, undefined, etc.
+    typeof o === "object" && // o is an object
+    isFinite(o.length) && // o.length is a finite number
+    o.length >= 0 && // o.length is non-negative
+    o.length === Math.floor(o.length) && // o.length is an integer
+    o.length < 4294967296)
       return true;
     else
       return false;
   }
   function isSortable(o) {
-    if (o && typeof o === "object" && typeof o.sort === "function")
+    if (o && // o is not null, undefined, etc.
+    typeof o === "object" && // o is an object
+    typeof o.sort === "function")
       return true;
     else
       return false;
@@ -626,9 +641,23 @@
     return isArrayLike(o) && isSortable(o);
   };
   var compare = {
+    /**
+     * Compare two numbers.
+     *
+     * @param {Number} a
+     * @param {Number} b
+     * @returns {Number} 1 if a > b, 0 if a = b, -1 if a < b
+     */
     numcmp: function(a, b) {
       return a - b;
     },
+    /**
+     * Compare two strings.
+     *
+     * @param {Number|String} a
+     * @param {Number|String} b
+     * @returns {Number} 1 if a > b, 0 if a = b, -1 if a < b
+     */
     strcmp: function(a, b) {
       return a < b ? -1 : a > b ? 1 : 0;
     }
@@ -763,6 +792,7 @@
     }
     return this.data.slice(start, finish + 1);
   };
+  const IndexedArray$1 = /* @__PURE__ */ getDefaultExportFromCjs(lib);
   const SECOND = 1e3;
   const MINUTE$1 = SECOND * 60;
   const MINUTE3 = MINUTE$1 * 3;
@@ -823,54 +853,101 @@
   const $SCALES$2 = [0.05, 0.1, 0.2, 0.25, 0.5, 0.8, 1, 2, 5];
   const COLORS = {
     back: "#14151c",
+    // Background color
     grid: "#252732",
+    // Grid color
     text: "#adadad",
+    // Regular text color
     textHL: "#dedddd",
+    // Highlighted text color
     textLG: "#c4c4c4",
+    // Legend text color
     llValue: "#818989",
+    // Legend value color
     llBack: "#14151c77",
+    // Legend bar background
     llSelect: "#2d7b2f",
+    // Legend select border
     scale: "#606060",
+    // Scale edge color
     cross: "#8091a0",
+    // Crosshair color
     candleUp: "#41a376",
+    // "Green" candle color
     candleDw: "#de4646",
+    // "Red" candle color
     wickUp: "#23a77688",
+    // "Green" wick color
     wickDw: "#e5415088",
+    // "Red" wick color
     volUp: "#41a37682",
+    // "Green" volume color
     volDw: "#de464682",
+    // "Red" volume color
     panel: "#2a2f38",
+    // Scale panel color
     tbBack: void 0,
+    // Toolbar background
     tbBorder: "#8282827d"
+    // Toolbar border color
   };
   const ChartConfig = {
     SBMIN: 60,
+    // Minimal sidebar, px
     SBMAX: Infinity,
+    // Max sidebar, px
     TOOLBAR: 57,
+    // Toolbar width, px
     TB_ICON: 25,
+    // Toolbar icon size, px
     TB_ITEM_M: 6,
+    // Toolbar item margin, px
     TB_ICON_BRI: 1,
+    // Toolbar icon brightness
     TB_ICON_HOLD: 420,
+    // Wait to expand, ms
     TB_BORDER: 1,
+    // Toolbar border, px
     TB_B_STYLE: "dotted",
+    // Toolbar border style
     TOOL_COLL: 7,
+    // Tool collision threshold
     EXPAND: 0.15,
+    // Expand y-range, %/100 of range
     CANDLEW: 0.7,
+    // Candle width, %/100 of step
     GRIDX: 100,
+    // Grid x-step target, px
     GRIDY: 47,
+    // Grid y-step target, px
     BOTBAR: 28,
+    // Bottom bar height, px
     PANHEIGHT: 22,
+    // Scale panel height, px
     DEFAULT_LEN: 50,
+    // Starting range, candles
     MINIMUM_LEN: 5,
+    // Minimal starting range, candles
     MIN_ZOOM: 5,
+    // Minimal zoom, candles
     MAX_ZOOM: 5e3,
+    // Maximal zoom, candles,
     VOLSCALE: 0.15,
+    // Volume bars height, %/100 of layout.height
     UX_OPACITY: 0.9,
+    // Ux background opacity
     ZOOM_MODE: "tv",
+    // Zoom mode, 'tv' or 'tl'
     L_BTN_SIZE: 21,
+    // Legend Button size, px
     L_BTN_MARGIN: "-6px 0 -6px 0",
+    // css margin
     SCROLL_WHEEL: "prevent",
+    // Scroll wheel morde, 'prevent', 'pass', 'click',
     QUANTIZE_AFTER: 0,
+    // Quantize cursor after, ms
     AUTO_PRE_SAMPLE: 10
+    // Sample size for auto-precision
   };
   ChartConfig.FONT = `11px -apple-system,BlinkMacSystemFont,
     Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,
@@ -897,6 +974,7 @@
     "1W": WEEK$2,
     "1M": MONTH$2,
     "1Y": YEAR$2,
+    // Lower case variants
     "1h": HOUR$2,
     "2h": HOUR$2 * 2,
     "3h": HOUR$2 * 3,
@@ -938,10 +1016,12 @@
       }
       return i;
     },
+    // Start of the day (zero millisecond)
     dayStart(t) {
       let start = new Date(t);
       return start.setUTCHours(0, 0, 0, 0);
     },
+    // Start of the month
     monthStart(t) {
       let date = new Date(t);
       return Date.UTC(
@@ -950,6 +1030,7 @@
         1
       );
     },
+    // Start of the year
     yearStart(t) {
       return Date.UTC(new Date(t).getFullYear());
     },
@@ -963,6 +1044,7 @@
         return void 0;
       return new Date(t).getUTCMonth();
     },
+    // Nearest in array
     nearestA(x, array) {
       let dist = Infinity;
       let val = null;
@@ -977,6 +1059,7 @@
       }
       return [index, val];
     },
+    // Nearest value by time (in timeseries)
     nearestTs(t, ts) {
       let dist = Infinity;
       let val = null;
@@ -991,6 +1074,7 @@
       }
       return [index, val];
     },
+    // Nearest value by index (in timeseries)
     nearestTsIb(i, ts, offset) {
       let index = Math.floor(i - offset) + 1;
       let val = ts[index] || null;
@@ -999,6 +1083,7 @@
     round(num, decimals = 8) {
       return parseFloat(num.toFixed(decimals));
     },
+    // Strip? No, it's ugly floats in js
     strip(number) {
       return parseFloat(
         parseFloat(number).toPrecision(12)
@@ -1007,12 +1092,15 @@
     getDay(t) {
       return t ? new Date(t).getDate() : null;
     },
+    // Update array keeping the same reference
     overwrite(arr, new_arr) {
       arr.splice(0, arr.length, ...new_arr);
     },
+    // Get full list of overlays on all panes
     allOverlays(panes = []) {
       return panes.map((x) => x.overlays || []).flat();
     },
+    // Detects a timeframe of the data
     detectTimeframe(data2) {
       let len = Math.min(data2.length - 1, 99);
       let min = Infinity;
@@ -1026,11 +1114,12 @@
       }
       return min;
     },
+    // Fast filter. Really fast, like 10X
     fastFilter(arr, t1, t2) {
       if (!arr.length)
         return [arr, void 0];
       try {
-        let ia = new lib(arr, "0");
+        let ia = new IndexedArray$1(arr, "0");
         let res = ia.getRange(t1, t2);
         let i0 = ia.valpos[t1].next;
         return [res, i0];
@@ -1040,11 +1129,12 @@
         ), 0];
       }
     },
+    // Fast filter 2 (returns indices)
     fastFilter2(arr, t1, t2) {
       if (!arr.length)
         return [arr, void 0];
       try {
-        let ia = new lib(arr, "0");
+        let ia = new IndexedArray$1(arr, "0");
         ia.fetch(t1);
         let start = ia.cursor || ia.nexthigh;
         ia.fetch(t2);
@@ -1059,6 +1149,7 @@
         return [i1, i2];
       }
     },
+    // Fast filter (index-based)
     fastFilterIB(arr, t1, t2) {
       if (!arr.length)
         return [void 0, void 0];
@@ -1068,17 +1159,19 @@
       let i2 = Math.floor(t2 + 1);
       return [i1, i2];
     },
+    // Nearest indexes (left and right)
     fastNearest(arr, t1) {
-      let ia = new lib(arr, "0");
+      let ia = new IndexedArray$1(arr, "0");
       ia.fetch(t1);
       return [ia.nextlow, ia.nexthigh];
     },
     now() {
-      return new Date().getTime();
+      return (/* @__PURE__ */ new Date()).getTime();
     },
     pause(delay) {
       return new Promise((rs, rj) => setTimeout(rs, delay));
     },
+    // Limit crazy wheel delta values
     smartWheel(delta) {
       let abs = Math.abs(delta);
       if (abs > 500) {
@@ -1086,12 +1179,15 @@
       }
       return delta;
     },
+    // Parse the original mouse event to find deltaX
     getDeltaX(event) {
       return event.originalEvent.deltaX / 12;
     },
+    // Parse the original mouse event to find deltaY
     getDeltaY(event) {
       return event.originalEvent.deltaY / 12;
     },
+    // Apply opacity to a hex color
     applyOpacity(c, op) {
       if (c.length === 7) {
         let n = Math.floor(op * 255);
@@ -1100,6 +1196,10 @@
       }
       return c;
     },
+    // Parse timeframe or return value in ms
+    // TODO: add full parser
+    // (https://github.com/tvjsx/trading-vue-js/
+    // blob/master/src/helpers/script_utils.js#L98)
     parseTf(smth) {
       if (typeof smth === "string") {
         return Const.MAP_UNIT[smth];
@@ -1107,6 +1207,8 @@
         return smth;
       }
     },
+    // Detect index shift between the main data subset
+    // and the overlay's subset (for IB-mode)
     indexShift(sub, data2) {
       if (!data2.length)
         return 0;
@@ -1125,6 +1227,8 @@
       }
       return 0;
     },
+    // Fallback fix for Brave browser
+    // https://github.com/brave/brave-browser/issues/1738
     measureText(ctx, text2, nvId) {
       let m = ctx.measureTextOrg(text2);
       if (m.width === 0) {
@@ -1159,12 +1263,26 @@
     uuid3() {
       return Math.random().toString().slice(2).replace(/^0+/, "");
     },
+    // Delayed warning, f = condition lambda fn
     warn(f, text2, delay = 0) {
       setTimeout(() => {
         if (f())
           console.warn(text2);
       }, delay);
     },
+    // Checks if script props updated
+    // (and not style settings or something else)
+    /*isScrPropsUpd(n, prev) {
+                let p = prev.find(x => x.v.$uuid === n.v.$uuid)
+                if (!p) return false
+    
+                let props = n.p.settings.$props
+                if (!props) return false
+    
+                return props.some(x => n.v[x] !== p.v[x])
+            },*/
+    // Checks if it's time to make a script update
+    // (based on execInterval in ms)
     delayedExec(v) {
       if (!v.script || !v.script.execInterval)
         return true;
@@ -1176,6 +1294,8 @@
       }
       return false;
     },
+    // Format names such 'RSI, $length', where
+    // length - is one of the settings
     formatName(ov) {
       if (!ov.name)
         return void 0;
@@ -1187,6 +1307,7 @@
       }
       return name;
     },
+    // Default cursor mode
     xMode() {
       return this.is_mobile ? "explore" : "default";
     },
@@ -1196,10 +1317,27 @@
       }
       return event.defaultPrevented;
     },
+    // Get a view from the data by the name
+    /*view(data, name) {
+        if (!data.views) return data
+        let v = data.views.find(x => x.name === name)
+        if (!v) return data
+        return v.data
+    },*/
+    /*concatArrays(arrays) {
+        var acc = []
+        for (var a of arrays) {
+            acc = acc.concat(a)
+        }
+        return acc
+    },*/
+    // Call
     afterAll(object, f, time) {
       clearTimeout(object.__afterAllId__);
       object.__afterAllId__ = setTimeout(() => f(), time);
     },
+    // Default auto-precision sampler for a generic
+    // timeseries-element: [time, x1, x2, x3, ...]
     defaultPreSampler(el) {
       if (!el)
         return [];
@@ -1211,12 +1349,16 @@
       }
       return out;
     },
+    // Get scales by side id (0 - left, 1 - right)
     getScalesBySide(side, layout) {
       if (!layout)
         return [];
       let template = layout.settings.scaleTemplate;
       return template[side].map((id) => layout.scales[id]).filter((x) => x);
     },
+    // If scaleTemplate is changed there could be a
+    // situation when user forget to reset scaleSideIdxs.
+    // Here we attemp to get them in sync
     autoScaleSideId(S, sides, idxs) {
       if (sides[S].length) {
         if (!idxs[S] || !sides[S].includes(idxs[S])) {
@@ -1226,6 +1368,8 @@
         idxs[S] = void 0;
       }
     },
+    // Debug function, shows how many times
+    // this method is called per second
     callsPerSecond() {
       if (window.__counter__ === void 0) {
         window.__counter__ = 0;
@@ -1239,6 +1383,8 @@
         window.__cpsId__ = null;
       }, 1e3);
     },
+    // Calculate an index offset for a timeseries
+    // against the main ts. (for indexBased mode)
     findIndexOffset(mainTs, ts) {
       let set1 = {};
       let set2 = {};
@@ -1262,6 +1408,7 @@
       }
       return 0;
     },
+    // Format cash values
     formatCash(n) {
       if (n == void 0)
         return "x";
@@ -1278,11 +1425,14 @@
       if (n >= 1e12)
         return +(n / 1e12).toFixed(2) + "T";
     },
+    // Time range of a data subset (from i0 to iN-1)
     realTimeRange(data2) {
       if (!data2.length)
         return 0;
       return data2[data2.length - 1][0] - data2[0][0];
     },
+    // Get sizes left and right parts of a number
+    // (11.22 -> ['11', '22'])
     numberLR(x) {
       var str = x != null ? x.toString() : "";
       if (x < 1e-6) {
@@ -1296,6 +1446,8 @@
       }
       return [l.length, r ? r.length : 0];
     },
+    // Get a hash of current overlay disposition:
+    // pane1.uuid+ov1.type+ov2.type+...+pane2.uuid+...
     ovDispositionHash(panes) {
       let h = "";
       for (var pane of panes) {
@@ -1308,13 +1460,18 @@
       }
       return h;
     },
+    // WTF with modern web development
     isMobile: ((w) => "onorientationchange" in w && (!!navigator.maxTouchPoints || !!navigator.msMaxTouchPoints || ("ontouchstart" in w || w.DocumentTouch && document instanceof w.DocumentTouch)))(typeof window !== "undefined" ? window : {})
   };
   const math = {
+    // Distance from point to line
+    // p1 = point, (p2, p3) = line
     point2line(p1, p2, p3) {
       let { area: area2, base } = this.tri(p1, p2, p3);
       return Math.abs(this.tri_h(area2, base));
     },
+    // Distance from point to segment
+    // p1 = point, (p2, p3) = segment
     point2seg(p1, p2, p3) {
       let { area: area2, base } = this.tri(p1, p2, p3);
       let proj = this.dot_prod(p1, p2, p3) / base;
@@ -1323,6 +1480,8 @@
       let h = Math.abs(this.tri_h(area2, base));
       return Math.max(h, l1, l2);
     },
+    // Distance from point to ray
+    // p1 = point, (p2, p3) = ray
     point2ray(p1, p2, p3) {
       let { area: area2, base } = this.tri(p1, p2, p3);
       let proj = this.dot_prod(p1, p2, p3) / base;
@@ -1337,23 +1496,33 @@
       let base = Math.sqrt(dx * dx + dy * dy);
       return { area: area2, base };
     },
+    /* Area of triangle:
+            p1
+          /    \
+        p2  _  p3
+    */
     area(p1, p2, p3) {
       return p1[0] * (p2[1] - p3[1]) + p2[0] * (p3[1] - p1[1]) + p3[0] * (p1[1] - p2[1]);
     },
+    // Triangle height
     tri_h(area2, base) {
       return area2 / base;
     },
+    // Dot product of (p2, p3) and (p2, p1)
     dot_prod(p1, p2, p3) {
       let v1 = [p3[0] - p2[0], p3[1] - p2[1]];
       let v2 = [p1[0] - p2[0], p1[1] - p2[1]];
       return v1[0] * v2[0] + v1[1] * v2[1];
     },
+    // Symmetrical log
     log(x) {
       return Math.sign(x) * Math.log(Math.abs(x) + 1);
     },
+    // Symmetrical exp
     exp(x) {
       return Math.sign(x) * (Math.exp(Math.abs(x)) - 1);
     },
+    // Middle line on log scale based on range & px height
     log_mid(r, h) {
       let log_hi = this.log(r[0]);
       let log_lo = this.log(r[1]);
@@ -1361,6 +1530,8 @@
       let gx = log_hi - px * (log_hi - log_lo) / h;
       return this.exp(gx);
     },
+    // Return new adjusted range, based on the previous
+    // range, new $hi, target middle line
     re_range(r1, hi2, mid) {
       let log_hi1 = this.log(r1[0]);
       let log_lo1 = this.log(r1[1]);
@@ -1369,9 +1540,25 @@
       let W = (log_hi2 - log_$) * (log_hi1 - log_lo1) / (log_hi1 - log_$);
       return this.exp(log_hi2 - W);
     }
+    // Return new adjusted range, based on the previous
+    // range, new $hi, target middle line + dy (shift)
+    // WASTE
+    /*range_shift(r1, hi2, mid, dy, h) {
+                let log_hi1 = this.log(r1[0])
+                let log_lo1 = this.log(r1[1])
+                let log_hi2 = this.log(hi2)
+                let log_$ = this.log(mid)
+    
+                let W = h * (log_hi2 - log_$) /
+                        (h * (log_hi1 - log_$) / (log_hi1 - log_lo1) + dy)
+    
+                return this.exp(log_hi2 - W)
+    
+            }*/
   };
   class Cursor {
-    constructor() {
+    constructor(meta) {
+      this.meta = meta;
     }
     xSync(hub, layout, props, update2) {
       if (update2.visible === false) {
@@ -1383,7 +1570,7 @@
       let start = layout.main.startx;
       let step = layout.main.pxStep;
       this.yValues(layout);
-      if (this.locked) {
+      if (this.locked && !this.meta.scrollLock) {
         this.x = layout.main.time2x(prevT);
         return this;
       }
@@ -1391,8 +1578,9 @@
       this.x = Math.floor(this.x - 1) + 0.5;
       return this.xValues(hub, layout, props);
     }
+    // Get nearest data values
     xValues(hub, layout, props) {
-      if (!this.locked) {
+      if (!this.locked || this.meta.scrollLock) {
         this.ti = layout.main.x2ti(this.x);
       }
       let values = [];
@@ -1418,6 +1606,7 @@
       this.quantizeTime(hub, layout, props);
       return this;
     }
+    // Calculate y-values for each scale
     yValues(layout) {
       let gridId = this.gridId;
       if (!layout.grids[gridId])
@@ -1429,6 +1618,7 @@
         this.scales[scale.scaleSpecs.id] = $;
       }
     }
+    // Quantize time (by interval)
     quantizeTime(hub, layout, props) {
       let id = hub.chart.id;
       let ovId = hub.mainOv.id;
@@ -1448,6 +1638,7 @@
         this.time = this.ti;
       }
     }
+    // Copy of the same function from layoutFn.js
     y2value(y, scale) {
       let ls = scale.scaleSpecs.log;
       if (ls)
@@ -1470,9 +1661,14 @@
     }
   }
   class Events {
+    // TODO: add component call priority (think)
+    // TODO: build event inspector (think)
     constructor() {
       this.handlers = {};
     }
+    // Immediately calls all handlers with the
+    // specified type (there can be only one
+    // listener of this type per each component)
     emit(type, obj) {
       let components = this.handlers[type];
       if (!components)
@@ -1481,6 +1677,7 @@
         components[name](obj);
       }
     }
+    // Component-specific update
     emitSpec(comp, type, obj) {
       let components = this.handlers[type];
       if (!components)
@@ -1489,6 +1686,11 @@
         return;
       components[comp](obj);
     }
+    // TODO: imlement more specific emitter, e.g.
+    // emitRegex() which uses RegEx to match
+    // components
+    // Add event listener to a specific component:
+    // '<component>:<event-type>'
     on(compAndType, f) {
       let [comp, type] = compAndType.split(":");
       if (!this.handlers[type]) {
@@ -1496,6 +1698,7 @@
       }
       this.handlers[type][comp] = f;
     }
+    // Remove event listeners / one listener
     off(comp, type = null) {
       if (type && this.handlers[type]) {
         delete this.handlers[type][comp];
@@ -1524,6 +1727,7 @@
       this.hub = hub;
       this.scan = scan;
     }
+    // Listen to the events from web-worker
     onEvent(e) {
       switch (e.data.type) {
         case "overlay-data":
@@ -1533,6 +1737,7 @@
           break;
       }
     }
+    // Upload initial data
     async uploadData() {
       if (!this.hub.mainOv)
         return;
@@ -1542,13 +1747,17 @@
           tf: this.scan.tf
         },
         dss: {
+          // TODO: 'cv' data key for [close, vol] chart
           ohlcv: this.hub.mainOv.data
         }
       });
     }
+    // Update data (when new live data arrives)
+    // TODO: autoscroll
     async updateData() {
       let ohlcv = this.hub.mainOv.data;
       let data2 = await this.ww.exec("update-data", {
+        // Send the last two candles
         ohlcv: ohlcv.slice(-2)
       });
       let unshift = false;
@@ -1582,6 +1791,7 @@
       await this.uploadData();
       await this.execScripts();
     }
+    // Remove all overlays produced by scripts & add new
     replaceOverlays(data2) {
       for (var pane of this.hub.panes()) {
         pane.overlays = pane.overlays.filter((x) => !x.prod);
@@ -1592,6 +1802,7 @@
       }
       this.chart.update();
     }
+    // Opdate data of overlays produced by scripts
     updateOverlays(data2) {
       for (var pane of this.hub.panes()) {
         let p = data2.find((x) => x.uuid === pane.uuid);
@@ -1610,6 +1821,7 @@
       }
       this.chart.update("data", { updateHash: true });
     }
+    // Event handlers
     onOverlayData(data2) {
       let h1 = Utils.ovDispositionHash(this.hub.panes());
       let h2 = Utils.ovDispositionHash(data2);
@@ -1664,6 +1876,8 @@
       this.mainOv = null;
       this.mainPaneId = null;
     }
+    // Update data on 'range-changed'. Should apply
+    // filters only (not updating the full structure)
     updateRange(range) {
       for (var pane of this.data.panes) {
         for (var ov of pane.overlays) {
@@ -1673,6 +1887,10 @@
         }
       }
     }
+    // Calculate visible data section
+    // (& completes the main structure)
+    // TODO: smarter algo of adding/removing panes. Uuids
+    // should remain the same if pane still exists
     calcSubset(range) {
       var paneId = 0;
       for (var pane of this.data.panes || []) {
@@ -1697,6 +1915,7 @@
         pane.uuid = pane.uuid || Utils.uuid3();
       }
     }
+    // Load indicator scripts
     async loadScripts(exec = false) {
       for (var pane of this.data.panes || []) {
         var scriptId = 0;
@@ -1713,6 +1932,7 @@
         await this.se.uploadAndExec();
       }
     }
+    // Detect the main chart, define offcharts
     detectMain() {
       let all = Utils.allOverlays(this.data.panes);
       let mainOv = all.find((x) => x.main) || all[0];
@@ -1734,6 +1954,7 @@
           ov.main = false;
       }
     }
+    // [API] Create a subset of timeseries
     filter(data2, range, offset = 0) {
       let filter = this.indexBased ? Utils.fastFilterIB : Utils.fastFilter2;
       var ix = filter(
@@ -1743,25 +1964,31 @@
       );
       return new DataView$(data2, ix[0], ix[1]);
     }
+    // [API] Get all active panes (with uuid)
     panes() {
       return (this.data.panes || []).filter((x) => x.uuid);
     }
+    // [API] Get overlay ref by paneId & ovId
     overlay(paneId, ovId) {
       var _a;
       return (_a = this.panes()[paneId]) == null ? void 0 : _a.overlays[ovId];
     }
+    // [API] Get overlay data by paneId & ovId
     ovData(paneId, ovId) {
       var _a, _b;
       return (_b = (_a = this.panes()[paneId]) == null ? void 0 : _a.overlays[ovId]) == null ? void 0 : _b.data;
     }
+    // [API] Get overlay data subset by paneId & ovId
     ovDataSubset(paneId, ovId) {
       var _a, _b;
       return (_b = (_a = this.panes()[paneId]) == null ? void 0 : _a.overlays[ovId]) == null ? void 0 : _b.dataSubset;
     }
+    // [API] Get All overlays
     allOverlays(type) {
       let all = Utils.allOverlays(this.data.panes);
       return type ? all.filter((x) => x.type === type) : all;
     }
+    // Event handlers
     onScaleIndex(event) {
       let pane = this.panes()[event.paneId];
       if (!pane)
@@ -1799,6 +2026,7 @@
       events.on("meta:sidebar-transform", this.onYTransform.bind(this));
       events.on("meta:select-overlay", this.onOverlaySelect.bind(this));
       events.on("meta:grid-mousedown", this.onGridMousedown.bind(this));
+      events.on("meta:scroll-lock", this.onScrollLock.bind(this));
       this.storage = {};
     }
     init(props) {
@@ -1812,8 +2040,11 @@
       this.selectedOverlay = void 0;
       this.ohlcMap = [];
       this.ohlcFn = void 0;
+      this.scrollLock = false;
     }
+    // Extract meta functions from overlay
     exctractFrom(overlay) {
+      var _a;
       let gridId = overlay.gridId();
       let id = overlay.id();
       var yrfs = this.yRangeFns[gridId] || [];
@@ -1826,7 +2057,8 @@
       var lfs = this.legendFns[gridId] || [];
       lfs[id] = {
         legend: overlay.legend,
-        legendHtml: overlay.legendHtml
+        legendHtml: overlay.legendHtml,
+        noLegend: (_a = overlay.noLegend) != null ? _a : false
       };
       var vts = this.valueTrackers[gridId] || [];
       vts[id] = overlay.valueTracker;
@@ -1839,6 +2071,8 @@
       this.legendFns[gridId] = lfs;
       this.valueTrackers[gridId] = vts;
     }
+    // Maps timestamp => ohlc, index
+    // TODO: should add support for indexBased? 
     calcOhlcMap() {
       this.ohlcMap = {};
       let data2 = this.hub.mainOv.data;
@@ -1849,11 +2083,16 @@
         };
       }
     }
+    // Store auto precision for a specific overlay
     setAutoPrec(gridId, ovId, prec) {
       let aps = this.autoPrecisions[gridId] || [];
       aps[ovId] = prec;
       this.autoPrecisions[gridId] = aps;
     }
+    // Call this after all overlays are processed
+    // We need to make an update to apply freshly
+    // extracted functions
+    // TODO: probably can do better
     finish() {
       this.panes++;
       if (this.panes < this.hub.panes().length)
@@ -1865,6 +2104,8 @@
         this.events.emit("update-legend");
       });
     }
+    // Store some meta info such as ytransform by
+    // (pane.uuid + scaleId) hash
     store() {
       this.storage = {};
       let yts = this.yTransforms || [];
@@ -1879,6 +2120,8 @@
         }
       }
     }
+    // Restore that info after an update in the
+    // pane/overlay order
     restore() {
       let yts = this.yTransforms;
       for (var hash2 in this.storage) {
@@ -1896,24 +2139,31 @@
       }
       this.store();
     }
+    // [API] Get y-transform of a specific scale
     getYtransform(gridId, scaleId) {
       return (this.yTransforms[gridId] || [])[scaleId];
     }
+    // [API] Get auto precision of a specific overlay
     getAutoPrec(gridId, ovId) {
       return (this.autoPrecisions[gridId] || [])[ovId];
     }
+    // [API] Get a precision smapler of a specific overlay
     getPreSampler(gridId, ovId) {
       return (this.preSamplers[gridId] || [])[ovId];
     }
+    // [API] Get legend formatter of a specific overlay
     getLegendFns(gridId, ovId) {
       return (this.legendFns[gridId] || [])[ovId];
     }
+    // [API] Get OHLC values to use as "magnet" values
     ohlc(t) {
       let el = this.ohlcMap[t];
       if (!el || !this.ohlcFn)
         return;
       return this.ohlcFn(el.ref);
     }
+    // EVENT HANDLERS
+    // User changed y-range
     onYTransform(event) {
       let yts = this.yTransforms[event.gridId] || {};
       let tx = yts[event.scaleId] || {};
@@ -1924,6 +2174,7 @@
       }
       this.store();
     }
+    // User tapped legend & selected the overlay
     onOverlaySelect(event) {
       this.selectedOverlay = event.index;
       this.events.emit("$overlay-select", {
@@ -1931,12 +2182,17 @@
         ov: this.hub.overlay(...event.index)
       });
     }
+    // User tapped grid (& deselected all overlays)
     onGridMousedown(event) {
       this.selectedOverlay = void 0;
       this.events.emit("$overlay-select", {
         index: void 0,
         ov: void 0
       });
+    }
+    // Overlay/user set lock on scrolling
+    onScrollLock(event) {
+      this.scrollLock = event;
     }
   }
   let instances$3 = {};
@@ -1977,6 +2233,7 @@
     getTimeframe() {
       return this.tf;
     }
+    // [API] Range that shown on a chart startup
     defaultRange() {
       const dl = this.props.config.DEFAULT_LEN;
       const ml = this.props.config.MINIMUM_LEN + 0.5;
@@ -2000,6 +2257,7 @@
         ];
       }
     }
+    // Calculate index offsets to adjust non-main ovs
     calcIndexOffsets() {
       var _a, _b;
       if (!this.hub.data.indexBased)
@@ -2013,6 +2271,7 @@
         ov.indexOffset = (_b = ov.indexOffset) != null ? _b : d;
       }
     }
+    // Calculte hash of the current panes
     calcPanesHash() {
       let hash2 = "";
       for (var pane of this.hub.data.panes || []) {
@@ -2023,6 +2282,7 @@
       }
       return hash2;
     }
+    // Detect changes in pane order/collection
     panesChanged() {
       let hash2 = this.calcPanesHash();
       return hash2 !== this.panesHash;
@@ -2047,42 +2307,56 @@
     const ls = (self2.scaleSpecs || {}).log || false;
     const offset = (_a = overlay ? overlay.indexOffset : 0) != null ? _a : 0;
     Object.assign(self2, {
+      // Time and global index to screen x-coordinate
+      // (universal mapping that works both in timeBased
+      // & indexBased modes):
+      // Time-index switch (returns time or index depending on the mode)
       ti: (t, i) => {
         return self2.indexBased ? i : t;
       },
+      // Time-or-index to screen x-coordinate
       ti2x: (t, i) => {
         let src = self2.indexBased ? i + offset : t;
         return Math.floor((src - range[0]) * r) + HPX$7;
       },
+      // Time to screen x-coordinates
       time2x: (t) => {
         return Math.floor((t - range[0]) * r) + HPX$7;
       },
+      // Price/value to screen y-coordinates
       value2y: (y) => {
         if (ls)
           y = math.log(y);
         return Math.floor(y * self2.A + self2.B) + HPX$7;
       },
+      // Time-axis nearest step
       tMagnet: (t) => {
       },
+      // Screen-Y to dollar value (or whatever)
       y2value: (y) => {
         if (ls)
           return math.exp((y - self2.B) / self2.A);
         return (y - self2.B) / self2.A;
       },
+      // Screen-X to timestamp
       x2time: (x) => {
         return range[0] + x / r;
       },
+      // Screen-X to time-index
       x2ti: (x) => {
         return range[0] + x / r;
       },
+      // $-axis nearest step
       $magnet: (price) => {
       },
+      // Nearest candlestick
       cMagnet: (t) => {
         const cn = self2.candles || self2.master_grid.candles;
         const arr = cn.map((x) => x.raw[0]);
         const i = Utils.nearestA(t, arr)[0];
         return cn[i];
       },
+      // Nearest data points
       dataMagnet: (t) => {
       }
     });
@@ -2156,7 +2430,7 @@
     function calc$Range() {
       var hi = -Infinity, lo = Infinity;
       for (var ov of ovs) {
-        if (ov.settings.display === false || ov.settings.dontScale == true)
+        if (ov.settings.display === false)
           continue;
         let yfn = (meta.yRangeFns[gridId] || [])[ov.id];
         let data2 = ov.dataSubset;
@@ -2184,7 +2458,6 @@
           hi = h;
         if (l < lo)
           lo = l;
-        break;
       }
       if (yt && !yt.auto && yt.range) {
         self2.$hi = yt.range[0];
@@ -2614,6 +2887,9 @@
     makeScales();
     selectSidebars();
     return {
+      // First we need to calculate max sidebar width
+      // (among all grids). Then we can actually make
+      // them
       create: () => {
         gridX();
         applySizes();
@@ -3374,9 +3650,9 @@ legendHtml(x) {
         <span class="nvjs-ll-value">\${fc(x[1])}</span>
         <span style="color: \${color1}">S</span>
         <span class="nvjs-ll-value">\${fc(x[2])}</span>
-        <span style="color: \${color1}">\u03A3</span>
+        <span style="color: \${color1}">Σ</span>
         <span class="nvjs-ll-value">\${fc(x[3])}</span>
-        <span style="color: \${color1}">\u0394</span>
+        <span style="color: \${color1}">Δ</span>
         <span class="nvjs-ll-value">\${sign}\${fc(x[4])}</span>
     \`
     //return [[sym + fc(x[1]), color.slice(0, 7)]]
@@ -3401,7 +3677,7 @@ prop('back2', { type: 'color', def: $props.color + '01' })
 prop('dataIndex', { type: 'integer', def: 1 })
 
 draw(ctx) {
-
+   
     const layout = $core.layout
     const data = $core.data // Full dataset
     const view = $core.view // Visible view
@@ -3653,43 +3929,48 @@ legend(x) => [[x[$props.dataIndex], $props.color]]
     __proto__: null,
     default: spline
   }, Symbol.toStringTag, { value: "Module" }));
-  const ALMA = "\n// Navy ~ 0.1-lite\n// <ds>Arnaud Legoux Moving Average</ds>\n\n[INDICATOR name=ALMA, version=1.0.0]\n\nprop('length', { type: 'integer', def: 10 })\nprop('offset', { type: 'number', def: 0.9 })\nprop('sigma', { type: 'number', def: 5 })\nprop('color', { type: 'color', def: '#559de0' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nlet $ = $props\n\nthis.specs = {\n    name: `ALMA ${$.length} ${$.offset} ${$.sigma}`,\n    props: {\n        color: $props.color,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet length = $props.length\nlet offset = $props.offset\nlet sigma = $props.sigma\n\nSpline(alma(close, length, offset, sigma), this.specs)\n";
+  const RangeTool = "// Navy ~ 0.1-lite\n// <ds>Time & value measurment tool [Shift+Click]</ds>\n\n[OVERLAY name=RangeTool, ctx=Canvas, verion=1.0.1, author=GPT4]\n\nlet pin1 = null \nlet pin2 = null \nlet shift = false\nlet state = 'idle'\n\ndraw(ctx) {\n    const layout = $core.layout \n\n    if (pin1 && pin2) {\n        const x1 = layout.time2x(pin1.t) // time to x coordinate\n        const x2 = layout.time2x(pin2.t) // time to x coordinate\n        const y1 = layout.value2y(pin1.v) // value to y coordinate\n        const y2 = layout.value2y(pin2.v) // value to y coordinate\n\n         // change fill color based on percentage\n        let color = percent() >= 0 ? '#3355ff' : '#ff3333';\n        ctx.fillStyle = color + '33';\n        ctx.fillRect(x1, y1, x2 - x1, y2 - y1)\n\n        // draw arrows in the middle of rectangle\n        let midX = (x1 + x2) / 2;\n        let midY = (y1 + y2) / 2;\n        $lib.drawArrow(ctx, midX, y1, midX, y2, color, Math.abs(y2 - y1) > 42); \n        $lib.drawArrow(ctx, x1, midY, x2, midY, color, Math.abs(x2 - x1) > 42);  \n\n        // draw rounded rectangle with text\n        const text1 = `${deltaValue().toFixed(2)} (${percent().toFixed(2)}%)`;\n        const text2 = `${bars()} bars, ${timeText()}`;\n        const text = `${text1}\\n${text2}`;\n        const textWidth = ctx.measureText(text).width;\n        \n        const padding = 10;\n        const mainRectCenterX = (x1 + x2) / 2; // calculate center of the main rectangle\n        const roundRectX = mainRectCenterX - textWidth / 2 - padding; // center the text rectangle relative to the main rectangle\n        const roundRectWidth = textWidth + 2 * padding;\n        const roundRectHeight = 50;  // adjust as needed\n        const roundRectY = percent() > 0 ? Math.min(y1, y2) - roundRectHeight - padding : Math.max(y1, y2) + padding;\n        const roundRectRadius = 5;   // adjust as needed\n        ctx.fillStyle = color + 'cc';\n        $lib.roundRect(ctx, roundRectX, roundRectY, roundRectWidth, roundRectHeight, roundRectRadius);\n\n        // draw text\n        ctx.fillStyle = '#ffffffcc' // color;\n        ctx.font = $lib.rescaleFont($core.props.config.FONT, 14);\n        ctx.textAlign = 'center';\n        ctx.textBaseline = 'middle';\n        ctx.fillText(text1, roundRectX + roundRectWidth / 2, roundRectY + roundRectHeight / 4);\n        ctx.fillText(text2, roundRectX + roundRectWidth / 2, roundRectY + 3 * roundRectHeight / 4);\n      \n    }\n}\n\n// Calculate the percentage of the are between pins v-values\n// assuming that pin2 is above pin1 equals positive value\n// and negative otherwise\npercent() {\n    if (pin1 && pin2) {\n        let delta = 100 * (pin2.v - pin1.v)\n        if (delta > 0) {\n            return delta / pin1.v\n        } else {\n            return delta / pin2.v\n        }\n    }\n    return 0\n}\n\n// Calculate delta time between pins t-values\n// assuming that pin2 on the right of pin1 equals positive value\n// and negative otherwise\ndeltaTime() {\n    if (pin1 && pin2) {\n        return pin2.t - pin1.t\n    }\n    return 0\n}\n\n// Calculate delta value between pins v-values\n// assuming that pin2 is above pin1 equals positive value\n// and negative otherwise\ndeltaValue() {\n    if (pin1 && pin2) {\n        return pin2.v - pin1.v\n    }\n    return 0\n}\n\n// Delta time in bars\nbars() {\n    let data = $core.hub.mainOv.dataSubset\n    if (pin1 && pin2) {\n        const layout = $core.layout\n        const bars = data.filter(bar => {\n            return bar[0] >= Math.min(pin1.t, pin2.t) && bar[0] <= Math.max(pin1.t, pin2.t)\n        });\n        let count = bars.length - 1; // reduce the count by 1\n        return pin2.t < pin1.t ? -count : count; // make it negative if pin2.t < pin1.t\n    }\n    return 0\n}\n\n// Delta time in text format\ntimeText() {\n    let deltaTimeMs = deltaTime();  // returns delta time in milliseconds\n    let timeFrameMs = $core.props.timeFrame;  // returns current chart timeframe in milliseconds\n\n    let negative = deltaTimeMs < 0;\n    deltaTimeMs = Math.abs(deltaTimeMs);\n\n    let minutes = Math.floor((deltaTimeMs / (1000 * 60)) % 60);\n    let hours = Math.floor((deltaTimeMs / (1000 * 60 * 60)) % 24);\n    let days = Math.floor(deltaTimeMs / (1000 * 60 * 60 * 24));\n\n    let result = \"\";\n    if (days > 0) {\n        result += days + \"d \";\n    }\n    if ((hours > 0 || days > 0) && hours !== 0) {\n        result += hours + \"h \";\n    }\n    if (minutes > 0 && timeFrameMs < 60 * 60 * 1000 && minutes !== 0) {\n        result += minutes + \"m\";\n    }\n\n    return (negative ? '-' : '') + result.trim();\n}\n\n\n\nkeydown(event) {\n    if (event.key === 'Shift') {\n        shift = true\n    }\n}\n\nkeyup(event) {\n    if (event.key === 'Shift') {\n        shift = false\n    }\n}\n\nmousedown(event) {\n    const layout = $core.layout \n    if (state === 'idle' && shift) {\n        // Create the first pin \n        pin1 = {\n            t: $core.cursor.time,\n            v: layout.y2value(event.layerY)\n        }\n        pin2 = { ...pin1 }\n        state = 'drawing'\n    } else if (state === 'drawing') {\n        state = 'finished'\n    } else if (state === 'finished') {\n        state = 'idle'\n        pin1 = null \n        pin2 = null \n    }\n    $events.emitSpec('chart', 'update-layout')\n}\n\nmousemove(event) {\n    if (state === 'drawing') {\n        const layout = $core.layout \n        // Create the second pin \n        pin2 = {\n            t: $core.cursor.time,\n            v: layout.y2value(event.layerY)\n        }\n    }\n}\n\n// Disable legend by returning null\nlegend() => null\n";
   const __vite_glob_1_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+    __proto__: null,
+    default: RangeTool
+  }, Symbol.toStringTag, { value: "Module" }));
+  const ALMA = "\n// Navy ~ 0.1-lite\n// <ds>Arnaud Legoux Moving Average</ds>\n\n[INDICATOR name=ALMA, version=1.0.0]\n\nprop('length', { type: 'integer', def: 10 })\nprop('offset', { type: 'number', def: 0.9 })\nprop('sigma', { type: 'number', def: 5 })\nprop('color', { type: 'color', def: '#559de0' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nlet $ = $props\n\nthis.specs = {\n    name: `ALMA ${$.length} ${$.offset} ${$.sigma}`,\n    props: {\n        color: $props.color,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet length = $props.length\nlet offset = $props.offset\nlet sigma = $props.sigma\n\nSpline(alma(close, length, offset, sigma), this.specs)\n";
+  const __vite_glob_2_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: ALMA
   }, Symbol.toStringTag, { value: "Module" }));
   const ATR = "\n// Navy ~ 0.1-lite\n// <ds>Average True Range</ds>\n\n[INDICATOR name=ATR, version=1.0.0]\n\nprop('length', { type: 'integer', def: 15 })\nprop('color', { type: 'color', def: '#e52468' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: 'ATR ' + $props.length,\n    props: {\n        color: $props.color\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nSpline(atr($props.length), this.specs)\n";
-  const __vite_glob_1_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: ATR
   }, Symbol.toStringTag, { value: "Module" }));
   const ATRp = "\n// Navy ~ 0.1-lite\n// <ds>Average True Range, percentage</ds>\n\n[INDICATOR name=ATRp, version=1.0.0]\n\nprop('length', { type: 'integer', def: 15 })\nprop('color', { type: 'color', def: '#f44336' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: 'ATR% ' + $props.length,\n    props: {\n        color: $props.color\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet k = 100 / close[0]\nSpline(atr($props.length)[0] * k, this.specs)\n";
-  const __vite_glob_1_2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: ATRp
   }, Symbol.toStringTag, { value: "Module" }));
   const BB = "\n// Navy ~ 0.1-lite\n// <ds>Bollinger Bands</ds>\n\n[INDICATOR name=BB, version=1.0.0]\n\nprop('length', { type: 'integer', def: 21 })\nprop('stddev', { type: 'number', def: 2 })\nprop('color', { type: 'color', def: '#2cc6c9ab' })\nprop('backColor', { type: 'color', def: '#2cc6c90a' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `BB ${$props.length} ${$props.stddev}`,\n    props: {\n        color: $props.color,\n        backColor: $props.backColor,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet length = $props.length\nlet stddev = $props.stddev\nlet [m, h, l] = bb(close, length, stddev)\nBand([h[0], m[0], l[0]], this.specs)\n";
-  const __vite_glob_1_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: BB
   }, Symbol.toStringTag, { value: "Module" }));
   const BBW = "\n// Navy ~ 0.1-lite\n// <ds>Bollinger Bands Width</ds>\n\n[INDICATOR name=BBW, version=1.0.0]\n\nprop('length', { type: 'integer', def: 21 })\nprop('stddev', { type: 'number', def: 2 })\nprop('color', { type: 'color', def: '#2cc6c9ab' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `BBW ${$props.length} ${$props.stddev}`,\n    props: {\n        color: $props.color,\n        backColor: $props.backColor,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet length = $props.length\nlet stddev = $props.stddev\nSpline(bbw(close, length, stddev), this.specs)\n";
-  const __vite_glob_1_4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: BBW
   }, Symbol.toStringTag, { value: "Module" }));
   const CCI = "\n// Navy ~ 0.1-lite\n// <ds>Commodity Channel Index</ds>\n\n[INDICATOR name=CCI, version=1.0.0]\n\nprop('length', { type: 'integer', def: 21 })\nprop('upperBand', { type: 'number', def: 100 })\nprop('lowerBand', { type: 'number', def: -100 })\nprop('color', { type: 'color', def: '#e28a3dee' })\nprop('backColor', { type: 'color', def: '#e28a3d11' })\nprop('bandColor', { type: 'color', def: '#999999' })\nprop('prec', { type: 'integer', def: 2 })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: 'CCI ' + $props.length,\n    props: {\n        color: $props.color,\n        backColor: $props.backColor,\n        bandColor: $props.bandColor,\n        upperBand: $props.upperBand,\n        lowerBand: $props.lowerBand,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nRange(cci(close, $props.length), this.specs)\n";
-  const __vite_glob_1_5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: CCI
   }, Symbol.toStringTag, { value: "Module" }));
   const CMO = "\n// Navy ~ 0.1-lite\n// <ds>Chande Momentum Oscillator</ds>\n\n[INDICATOR name=CMO, version=1.0.0]\n\nprop('length', { type: 'integer', def: 10 })\nprop('color', { type: 'color', def: '#559de0' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `CMO ${$props.length}`,\n    props: {\n        color: $props.color\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet length = $props.length\nSpline(cmo(close, length), this.specs)\n";
-  const __vite_glob_1_6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: CMO
   }, Symbol.toStringTag, { value: "Module" }));
   const COG = "\n// Navy ~ 0.1-lite\n// <ds>Center of Gravity</ds>\n\n[INDICATOR name=COG, version=1.0.0]\n\nprop('length', { type: 'integer', def: 10 })\nprop('color', { type: 'color', def: '#559de0' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `COG ${$props.length}`,\n    props: {\n        color: $props.color\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet length = $props.length\nSpline(cog(close, length), this.specs)\n";
-  const __vite_glob_1_7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: COG
   }, Symbol.toStringTag, { value: "Module" }));
@@ -3723,97 +4004,97 @@ this.specs = {
 let [adx, dp, dn] = dmi($props.length, $props.smooth)
 Splines([adx[0], dp[0], dn[0]], this.specs)
 `;
-  const __vite_glob_1_8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_8 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: DMI
   }, Symbol.toStringTag, { value: "Module" }));
   const EMA = "\n// Navy ~ 0.1-lite\n// <ds>Exponential Moving Average</ds>\n\n[INDICATOR name=EMA, version=1.0.0]\n\nprop('length', { type: 'integer', def: 12 })\nprop('color', { type: 'color', def: '#f7890c' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `EMA ${$props.length}`,\n    props: {\n        color: $props.color,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nSpline(ema(close, $props.length), this.specs)\n";
-  const __vite_glob_1_9 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_9 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: EMA
   }, Symbol.toStringTag, { value: "Module" }));
   const HMA = "\n// Navy ~ 0.1-lite\n// <ds>Hull Moving Average</ds>\n\n[INDICATOR name=HMA, version=1.0.0]\n\nprop('length', { type: 'integer', def: 10 })\nprop('color', { type: 'color', def: '#3af475' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `HMA ${$props.length}`,\n    props: {\n        color: $props.color,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nSpline(hma(close, $props.length), this.specs)\n";
-  const __vite_glob_1_10 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_10 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: HMA
   }, Symbol.toStringTag, { value: "Module" }));
   const Ichimoku = "\n// Navy ~ 0.1-lite\n// <ds>Ichimoku Cloud</ds>\n\n[INDICATOR name=Ichimoku, version=1.0.0]\n\nprop('convLength', { type: 'integer', def: 9 })\nprop('baseLength', { type: 'integer', def: 26 })\nprop('laggingLength', { type: 'integer', def: 52 })\nprop('displacement', { type: 'integer', def: 26 })\nprop('cloudUpColor', { type: 'color', def: '#79ffde18' })\nprop('cloudDwColor', { type: 'color', def: '#ff246c18' })\nprop('convColor', { type: 'color', def: '#4eb6d8' })\nprop('baseColor', { type: 'color', def: '#d626a1' })\nprop('laggingColor', { type: 'color', def: '#66cc66' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = ({name, props}) => ({\n    name: name,\n    props: props,\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n})\n\n[UPDATE]\n\nlet $ = $props\nlet donchian = (len, id) => ts(\n    avg(lowest(low, len)[0], highest(high, len)[0]), id\n)\nlet conversionLine = donchian($.convLength, 1)\nlet baseLine = donchian($.baseLength, 2)\nlet leadLine1 = ts(avg(conversionLine[0], baseLine[0]))\nlet leadLine2 = donchian($.laggingLength, 3)\nlet lagging = ts(close[0])\noffset(leadLine1, $.displacement - 1)\noffset(leadLine2, $.displacement - 1)\noffset(lagging, -$.displacement + 1)\n\nCloud([leadLine1, leadLine2], this.specs({\n    name: `Cloud`,\n    props: {\n        back1: $props.cloudUpColor,\n        back2: $props.cloudDwColor\n    }\n}))\n\nSplines([conversionLine, baseLine], this.specs({\n    name: `Base Lines ${$.convLength} ${$.baseLength}`,\n    props: {\n        colors: [\n            $props.convColor,\n            $props.baseColor\n        ]\n    }\n}))\n\nSpline(lagging, this.specs({\n    name: `Lagging Span ${$.laggingLength}`,\n    props: {\n        color: $props.laggingColor\n    }\n}))\n";
-  const __vite_glob_1_11 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_11 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: Ichimoku
   }, Symbol.toStringTag, { value: "Module" }));
   const KC = "\n// Navy ~ 0.1-lite\n// <ds>Keltner Channels</ds>\n\n[INDICATOR name=KC, version=1.0.0]\n\nprop('length', { type: 'integer', def: 20 })\nprop('mult', { type: 'number', def: 1 })\nprop('trueRange', { type: 'boolean', def: true })\nprop('color', { type: 'color', def: '#4c8dffab' })\nprop('backColor', { type: 'color', def: '#4c8dff0a' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `KC ${$props.length} ${$props.mult}`,\n    props: {\n        color: $props.color,\n        backColor: $props.backColor,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet $ = $props\nlet [m, h, l] = kc(close, $.length, $.mult, $.trueRange)\nBand([h[0], m[0], l[0]], this.specs)\n";
-  const __vite_glob_1_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_12 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: KC
   }, Symbol.toStringTag, { value: "Module" }));
   const KCW = "\n// Navy ~ 0.1-lite\n// <ds>Keltner Channels Width</ds>\n\n[INDICATOR name=KCW, version=1.0.0]\n\nprop('length', { type: 'integer', def: 20 })\nprop('mult', { type: 'number', def: 1 })\nprop('trueRange', { type: 'boolean', def: true })\nprop('color', { type: 'color', def: '#4c8dffab' })\nprop('backColor', { type: 'color', def: '#4c8dff0a' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `KCW ${$props.length} ${$props.mult}`,\n    props: {\n        color: $props.color,\n        backColor: $props.backColor,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet $ = $props\nlet w = kcw(close, $.length, $.mult, $.trueRange)\nSpline(w, this.specs)\n";
-  const __vite_glob_1_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_13 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: KCW
   }, Symbol.toStringTag, { value: "Module" }));
   const MACD = "\n// Navy ~ 0.1-lite\n// <ds>Moving Average Convergence/Divergence</ds>\n\n[INDICATOR name=MACD, version=1.0.0]\n\nprop('fast', { type: 'integer', def: 12 })\nprop('slow', { type: 'integer', def: 26 })\nprop('smooth', { type: 'integer', def: 9 })\nprop('colorMacd', { type: 'color', def: '#3782f2' })\nprop('colorSignal', { type: 'color', def: '#f48709' })\nprop('colorUp', { type: 'Color', def: '#35a776' })\nprop('colorDw', { type: 'Color', def: '#e54150' })\nprop('colorSemiUp', { type: 'Color', def: '#79e0b3' })\nprop('colorSemiDw', { type: 'Color', def: '#ea969e' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nlet $ = $props\nthis.specs = {\n    name: `MACD ${$.fast} ${$.slow} ${$.smooth}`,\n    props: {\n        colorValue: $.colorMacd,\n        colorSignal: $.colorSignal,\n        colorUp: $.colorUp,\n        colorDw: $.colorDw,\n        colorSemiUp: $.colorSemiUp,\n        colorSemiDw: $.colorSemiDw\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet $ = $props\nlet [m, s, h] = macd(close, $.fast, $.slow, $.smooth)\n\nHistogram([h[0], m[0], s[0]], this.specs)\n";
-  const __vite_glob_1_14 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_14 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: MACD
   }, Symbol.toStringTag, { value: "Module" }));
   const MFI = "\n// Navy ~ 0.1-lite\n// <ds>Money Flow Index	</ds>\n\n[INDICATOR name=MFI, version=1.0.0]\n\nprop('length', { type: 'integer', def: 14 })\nprop('upperBand', { type: 'number', def: 80 })\nprop('lowerBand', { type: 'number', def: 20 })\nprop('color', { type: 'color', def: '#85c427ee' })\nprop('backColor', { type: 'color', def: '#85c42711' })\nprop('bandColor', { type: 'color', def: '#999999' })\nprop('prec', { type: 'integer', def: 2 })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: 'MFI ' + $props.length,\n    props: {\n        color: $props.color,\n        backColor: $props.backColor,\n        bandColor: $props.bandColor,\n        upperBand: $props.upperBand,\n        lowerBand: $props.lowerBand,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet hlc3 = ts((high[0] + low[0] + close[0]) / 3)\nRange(mfi(hlc3, $props.length), this.specs)\n";
-  const __vite_glob_1_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_15 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: MFI
   }, Symbol.toStringTag, { value: "Module" }));
   const MOM = "\n// Navy ~ 0.1-lite\n// <ds>Momentum</ds>\n\n[INDICATOR name=MOM, version=1.0.0]\n\nprop('length', { type: 'integer', def: 11 })\nprop('color', { type: 'color', def: '#bcc427ee' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `MOM ${$props.length}`,\n    props: {\n        color: $props.color\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet length = $props.length\nSpline(mom(close, length), this.specs)\n";
-  const __vite_glob_1_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_16 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: MOM
   }, Symbol.toStringTag, { value: "Module" }));
   const ROC = "\n// Navy ~ 0.1-lite\n// <ds>Rate of Change</ds>\n\n[INDICATOR name=ROC, version=1.0.0]\n\nprop('length', { type: 'integer', def: 9 })\nprop('color', { type: 'color', def: '#279fc4' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `ROC ${$props.length}`,\n    props: {\n        color: $props.color\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet length = $props.length\nSpline(roc(close, length), this.specs)\n";
-  const __vite_glob_1_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_17 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: ROC
   }, Symbol.toStringTag, { value: "Module" }));
   const RSI = "\n// Navy ~ 0.1-lite\n// <ds>Relative Strength Index</ds>\n\n[INDICATOR name=RSI, version=1.0.0]\n\nprop('length', { type: 'integer', def: 14 })\nprop('color', { type: 'color', def: '#3399ff' })\nprop('prec', { type: 'integer', def: 2 })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: 'RSI ' + $props.length,\n    props: {\n        color: $props.color\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nRange(rsi(close, $props.length), this.specs)\n";
-  const __vite_glob_1_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_18 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: RSI
   }, Symbol.toStringTag, { value: "Module" }));
   const Ribbon = "\n// Navy ~ 0.1-lite\n// <ds>Exponential Moving Average Ribbon</ds>\n\n[INDICATOR name=Ribbon, version=1.0.0]\n\nprop('start', { type: 'integer', def: 10 })\nprop('number', { type: 'integer', def: 5 })\nprop('step', { type: 'integer', def: 10 })\nprop('colors', { type: 'array', def: [\"#3aaaf4ee\"] })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `EMA x ${$props.number}`,\n    props: {\n        colors: $props.colors,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet $ = $props\nlet arr = []\nfor (var i = 0; i < $.number; i++) {\n    let l = $.start + i * $.step\n    arr.push(ema(close, l)[0])\n}\n\nSplines(arr, this.specs)\n";
-  const __vite_glob_1_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_19 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: Ribbon
   }, Symbol.toStringTag, { value: "Module" }));
   const SAR = "\n// Navy ~ 0.1-lite\n// <ds>Parabolic SAR</ds>\n\n[INDICATOR name=SAR, version=1.0.0]\n\nprop('start', { type: 'number', def: 0.02 })\nprop('inc', { type: 'number', def: 0.02 })\nprop('max', { type: 'number', def: 0.2 })\nprop('color', { type: 'color', def: '#35a9c6' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nlet $ = $props\nthis.specs = {\n    name: `SAR ${$.start} ${$.inc} ${$.max}`,\n    props: {\n        color: $props.color,\n        shape: 'cross'\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet $ = $props\nSparse(sar($.start, $.inc, $.max), this.specs)\n";
-  const __vite_glob_1_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_20 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: SAR
   }, Symbol.toStringTag, { value: "Module" }));
   const SMA = "\n// Navy ~ 0.1-lite\n// <ds>Simple Moving Average</ds>\n\n[INDICATOR name=SMA, version=1.0.0]\n\nprop('length', { type: 'integer', def: 12 })\nprop('color', { type: 'color', def: '#d1385c' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `SMA ${$props.length}`,\n    props: {\n        color: $props.color,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nSpline(sma(close, $props.length), this.specs)\n";
-  const __vite_glob_1_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_21 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: SMA
   }, Symbol.toStringTag, { value: "Module" }));
   const SWMA = "\n// Navy ~ 0.1-lite\n// <ds>Symmetrically Weighted Moving Average</ds>\n\n[INDICATOR name=SWMA, version=1.0.0]\n\nprop('color', { type: 'color', def: '#e57440' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `SWMA`,\n    props: {\n        color: $props.color,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nSpline(swma(close), this.specs)\n";
-  const __vite_glob_1_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_22 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: SWMA
   }, Symbol.toStringTag, { value: "Module" }));
   const Stoch = "\n// Navy ~ 0.1-lite\n// <ds>Stochastic</ds>, format: [<timestamp>, <kLine>, <dLine>]\n\n[OVERLAY name=Stoch, version=1.0.0]\n\nprop('kColor', { type: 'color', def: '#3782f2' })\nprop('dColor', { type: 'color', def: '#f48709' })\nprop('bandColor', { type: 'color', def: '#535559' })\nprop('backColor', { type: 'color', def: '#381e9c16' })\nprop('upperBand', { type: 'number', def: 80 })\nprop('lowerBand', { type: 'number', def: 20 })\n\ndraw(ctx) {\n    const layout = $core.layout\n    const upper = layout.value2y($props.upperBand)\n    const lower = layout.value2y($props.lowerBand)\n    const data = $core.data\n    const view = $core.view\n\n    // K\n    ctx.lineWidth = 1\n    ctx.strokeStyle = $props.kColor\n    ctx.beginPath()\n    for (var i = view.i1, n = view.i2; i <= n; i++) {\n        let p = data[i]\n        let x = layout.ti2x(p[0], i)\n        let y = layout.value2y(p[1])\n        ctx.lineTo(x, y)\n    }\n    ctx.stroke()\n\n    // D\n    ctx.strokeStyle = $props.dColor\n    ctx.beginPath()\n    for (var i = view.i1, n = view.i2; i <= n; i++) {\n        let p = data[i]\n        let x = layout.ti2x(p[0], i)\n        let y = layout.value2y(p[2])\n        ctx.lineTo(x, y)\n    }\n    ctx.stroke()\n\n    ctx.strokeStyle = $props.bandColor\n    ctx.setLineDash([5]) // Will be removed after draw()\n    ctx.beginPath()\n    // Fill the area between the bands\n    ctx.fillStyle = $props.backColor\n    ctx.fillRect(0, upper, layout.width, lower - upper)\n    // Upper band\n    ctx.moveTo(0, upper)\n    ctx.lineTo(layout.width, upper)\n    // Lower band\n    ctx.moveTo(0, lower)\n    ctx.lineTo(layout.width, lower)\n    ctx.stroke()\n}\n\nyRange(hi, lo) => [\n    Math.max(hi, $props.upperBand),\n    Math.min(lo, $props.lowerBand)\n]\n\n// Legend, defined as pairs [value, color]\nlegend(x) => [[x[1], $props.kColor], [x[1], $props.dColor]]\n\n\n[INDICATOR name=Stoch, version=1.0.0]\n\nprop('paramK', { def: 14 })\nprop('paramD', { def: 3 })\nprop('smooth', { def: 3 })\nprop('kColor', { type: 'color', def: '#3782f2' })\nprop('dColor', { type: 'color', def: '#f48709' })\nprop('prec', { type: 'integer', def: 2 })\nprop('zIndex', { type: 'integer', def: 0 })\n\nlet $ = $props\nthis.specs = {\n    name: `Stoch ${$.paramK} ${$.paramD} ${$.smooth}`,\n    props: {\n        kColor: $props.kColor,\n        dColor: $props.dColor\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet $ = $props\nlet k = sma(stoch(close, high, low, $.paramK), $.smooth)\nlet d = sma(k, $.paramD)\nStoch([k[0], d[0]], this.specs)\n";
-  const __vite_glob_1_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_23 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: Stoch
   }, Symbol.toStringTag, { value: "Module" }));
   const TSI = "\n// Navy ~ 0.1-lite\n// <ds>True Strength Index</ds>\n\n[INDICATOR name=TSI, version=1.0.0]\n\nprop('long', { type: 'integer', def: 25 })\nprop('short', { type: 'integer', def: 13 })\nprop('signal', { type: 'integer', def: 13 })\nprop('color1', { type: 'color', def: '#3bb3e4' })\nprop('color2', { type: 'color', def: '#f7046d' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nlet $ = $props\nthis.specs = {\n    name: `TSI ${$.long} ${$.short} ${$.signal}`,\n    props: {\n        colors: [$.color1, $.color2]\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nlet $ = $props\nlet val = tsi(close, $.short, $.long)\nlet sig = ema(val, $.signal)\nSplines([val[0] * 100, sig[0] * 100], this.specs)\n";
-  const __vite_glob_1_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_24 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: TSI
   }, Symbol.toStringTag, { value: "Module" }));
   const VWMA = "\n// Navy ~ 0.1-lite\n// <ds>Volume Weighted Moving Average</ds>\n\n[INDICATOR name=VWMA, version=1.0.0]\n\nprop('length', { type: 'integer', def: 20 })\nprop('color', { type: 'color', def: '#db0670' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `VWMA ${$props.length}`,\n    props: {\n        color: $props.color,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nSpline(vwma(close, $props.length), this.specs)\n";
-  const __vite_glob_1_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_25 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: VWMA
   }, Symbol.toStringTag, { value: "Module" }));
   const WilliamsR = "\n// Navy ~ 0.1-lite\n// <ds>Williams %R</ds>\n\n[INDICATOR name=WilliamsR, version=1.0.0]\n\nprop('length', { type: 'integer', def: 14 })\nprop('upperBand', { type: 'number', def: -20 })\nprop('lowerBand', { type: 'number', def: -80 })\nprop('color', { type: 'color', def: '#0980e8' })\nprop('backColor', { type: 'color', def: '#9b9ba316' })\nprop('bandColor', { type: 'color', def: '#535559' })\nprop('prec', { type: 'integer', def: autoPrec() })\nprop('zIndex', { type: 'integer', def: 0 })\n\nthis.specs = {\n    name: `%R ${$props.length}`,\n    props: {\n        color: $props.color,\n        backColor: $props.backColor,\n        bandColor: $props.bandColor,\n        upperBand: $props.upperBand,\n        lowerBand: $props.lowerBand,\n    },\n    settings: {\n        precision: $props.prec,\n        zIndex: $props.zIndex\n    }\n}\n\n[UPDATE]\n\nRange(wpr($props.length), this.specs)\n";
-  const __vite_glob_1_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const __vite_glob_2_26 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: WilliamsR
   }, Symbol.toStringTag, { value: "Module" }));
@@ -3869,7 +4150,7 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
     return walk(cst);
   };
   var compile_1 = compile$1;
-  class Node$1 {
+  let Node$1 = class Node {
     constructor(node) {
       this.type = node.type;
       if (node.value)
@@ -3881,8 +4162,8 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
     get protected() {
       return Boolean(this.match) && this.match[1] === "!";
     }
-  }
-  class Block$1 extends Node$1 {
+  };
+  let Block$1 = class Block extends Node$1 {
     constructor(node) {
       super(node);
       this.nodes = node.nodes || [];
@@ -3893,7 +4174,7 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
     get protected() {
       return this.nodes.length > 0 && this.nodes[0].protected === true;
     }
-  }
+  };
   var Node_1 = { Node: Node$1, Block: Block$1 };
   var languages$1 = {};
   (function(exports3) {
@@ -4087,8 +4368,10 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
     return compile(parse(input, opts), opts);
   };
   strip.parse = parse;
+  var stripCommentsExports = stripComments.exports;
+  const strip$1 = /* @__PURE__ */ getDefaultExportFromCjs(stripCommentsExports);
   function decomment(src, file) {
-    return stripComments.exports(src);
+    return strip$1(src);
   }
   function maskStrings(src, file) {
     let quotes = findStrings(src, file);
@@ -4228,6 +4511,8 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
       code = this.prepFuncions3(code);
       this.prefab = this.wrapTheCode(code, this.flags);
     }
+    // Find all function declarations & replace them with
+    // arrow functions (first category: f() {} )
     prepFuncions1(code) {
       let copy = "";
       let i = 0;
@@ -4254,6 +4539,8 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
       } while (m);
       return copy + code.slice(i);
     }
+    // Find all function declarations & replace them with
+    // arrow functions (third category: f() => {})
     prepFuncions2(code) {
       let copy = "";
       let i = 0;
@@ -4280,6 +4567,8 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
       } while (m);
       return copy + code.slice(i);
     }
+    // Find all function declarations & replace them with
+    // arrow functions (third category: f() => Expression)
     prepFuncions3(code) {
       let copy = "";
       let i = 0;
@@ -4293,25 +4582,34 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
           let arrow = FREGX3.lastIndex;
           copy += code.slice(i, m.index);
           copy += `var ${fname} = (${fargs}) => `;
-          this.parseFlags(fname, fargs, "");
+          let block = code.slice(arrow).split("\n")[0].trim();
+          this.parseFlags(fname, fargs, block);
           i = arrow + 1;
         }
       } while (m);
       return copy + code.slice(i);
     }
+    // Add some flag for the future use (e.g. in layout)
     parseFlags(name, fargs, block) {
       if (name === "yRange") {
         let x = !!fargs.trim().length;
         this.flags += `yRangePreCalc: ${x},
 `;
+      } else if (name === "legend") {
+        if (block === "null" || block === "undefined") {
+          this.flags += `noLegend: true,
+`;
+        }
       }
     }
+    // Create a function that returns a new overlay object
     wrapTheCode(code, flags) {
       return new Function("env", `
 
             // Setup the environment
             let { $core, $props, $events } = env
             let prop = (...args) => env.prop(...args)
+            let watchProp = (...args) => env.watchProp(...args)
 
             // Add primitives
             let $lib = env.lib
@@ -4422,6 +4720,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.overlayTags();
       this.indicatorTags();
     }
+    // Parse the version
     navyVers() {
       let first = (this.src.match(VERS_REGX) || [])[0];
       if (first) {
@@ -4434,6 +4733,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
       return [0];
     }
+    // Parse [OVERLAY] tags
     overlayTags() {
       OV_REGX.lastIndex = 0;
       var match;
@@ -4445,6 +4745,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         OV_REGX.lastIndex -= 10;
       }
     }
+    // Parse [INDICATOR] tags
     indicatorTags() {
       IND_REGX.lastIndex = 0;
       var match;
@@ -4457,9 +4758,6 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     }
   }
-  function WorkerWrapper() {
-    return new Worker("/assets/worker.12a131da.js");
-  }
   class WebWork {
     constructor(id, chart) {
       this.chart = chart;
@@ -4471,9 +4769,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     start() {
       if (this.worker)
         this.worker.terminate();
-      this.worker = new WorkerWrapper();
+      this.worker = new Worker(new URL("/assets/worker-0fc67022.js", self.location), {
+        type: "module"
+      });
       this.worker.onmessage = (e) => this.onmessage(e);
     }
+    // TODO: Do we need this ???
     startSocket() {
     }
     send(msg, txKeys) {
@@ -4484,6 +4785,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.worker.postMessage(msg);
       }
     }
+    // Send to node.js via websocket
     sendToNode(msg, txKeys) {
     }
     onmessage(e) {
@@ -4494,6 +4796,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.onevent(e);
       }
     }
+    // Execute a task
     async exec(type, data2, txKeys) {
       return new Promise((rs, rj) => {
         let id = Utils.uuid();
@@ -4503,10 +4806,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         };
       });
     }
+    // Execute a task, but just fucking do it,
+    // do not wait for the result
     just(type, data2, txKeys) {
       let id = Utils.uuid();
       this.send({ type, id, data: data2 }, txKeys);
     }
+    // Relay an event from iframe postMessage
+    // (for the future)
     async relay(event, just = false) {
       return new Promise((rs, rj) => {
         this.send(event, event.txKeys);
@@ -4548,34 +4855,37 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     "../scripts/candles.navy": __vite_glob_0_14,
     "../scripts/spline.navy": __vite_glob_0_15
   });
+  const Tools = /* @__PURE__ */ Object.assign({
+    "../scripts/tools/RangeTool.navy": __vite_glob_1_0
+  });
   const Indicators = /* @__PURE__ */ Object.assign({
-    "../scripts/indicators/ALMA.navy": __vite_glob_1_0,
-    "../scripts/indicators/ATR.navy": __vite_glob_1_1,
-    "../scripts/indicators/ATRp.navy": __vite_glob_1_2,
-    "../scripts/indicators/BB.navy": __vite_glob_1_3,
-    "../scripts/indicators/BBW.navy": __vite_glob_1_4,
-    "../scripts/indicators/CCI.navy": __vite_glob_1_5,
-    "../scripts/indicators/CMO.navy": __vite_glob_1_6,
-    "../scripts/indicators/COG.navy": __vite_glob_1_7,
-    "../scripts/indicators/DMI.navy": __vite_glob_1_8,
-    "../scripts/indicators/EMA.navy": __vite_glob_1_9,
-    "../scripts/indicators/HMA.navy": __vite_glob_1_10,
-    "../scripts/indicators/Ichimoku.navy": __vite_glob_1_11,
-    "../scripts/indicators/KC.navy": __vite_glob_1_12,
-    "../scripts/indicators/KCW.navy": __vite_glob_1_13,
-    "../scripts/indicators/MACD.navy": __vite_glob_1_14,
-    "../scripts/indicators/MFI.navy": __vite_glob_1_15,
-    "../scripts/indicators/MOM.navy": __vite_glob_1_16,
-    "../scripts/indicators/ROC.navy": __vite_glob_1_17,
-    "../scripts/indicators/RSI.navy": __vite_glob_1_18,
-    "../scripts/indicators/Ribbon.navy": __vite_glob_1_19,
-    "../scripts/indicators/SAR.navy": __vite_glob_1_20,
-    "../scripts/indicators/SMA.navy": __vite_glob_1_21,
-    "../scripts/indicators/SWMA.navy": __vite_glob_1_22,
-    "../scripts/indicators/Stoch.navy": __vite_glob_1_23,
-    "../scripts/indicators/TSI.navy": __vite_glob_1_24,
-    "../scripts/indicators/VWMA.navy": __vite_glob_1_25,
-    "../scripts/indicators/WilliamsR.navy": __vite_glob_1_26
+    "../scripts/indicators/ALMA.navy": __vite_glob_2_0,
+    "../scripts/indicators/ATR.navy": __vite_glob_2_1,
+    "../scripts/indicators/ATRp.navy": __vite_glob_2_2,
+    "../scripts/indicators/BB.navy": __vite_glob_2_3,
+    "../scripts/indicators/BBW.navy": __vite_glob_2_4,
+    "../scripts/indicators/CCI.navy": __vite_glob_2_5,
+    "../scripts/indicators/CMO.navy": __vite_glob_2_6,
+    "../scripts/indicators/COG.navy": __vite_glob_2_7,
+    "../scripts/indicators/DMI.navy": __vite_glob_2_8,
+    "../scripts/indicators/EMA.navy": __vite_glob_2_9,
+    "../scripts/indicators/HMA.navy": __vite_glob_2_10,
+    "../scripts/indicators/Ichimoku.navy": __vite_glob_2_11,
+    "../scripts/indicators/KC.navy": __vite_glob_2_12,
+    "../scripts/indicators/KCW.navy": __vite_glob_2_13,
+    "../scripts/indicators/MACD.navy": __vite_glob_2_14,
+    "../scripts/indicators/MFI.navy": __vite_glob_2_15,
+    "../scripts/indicators/MOM.navy": __vite_glob_2_16,
+    "../scripts/indicators/ROC.navy": __vite_glob_2_17,
+    "../scripts/indicators/RSI.navy": __vite_glob_2_18,
+    "../scripts/indicators/Ribbon.navy": __vite_glob_2_19,
+    "../scripts/indicators/SAR.navy": __vite_glob_2_20,
+    "../scripts/indicators/SMA.navy": __vite_glob_2_21,
+    "../scripts/indicators/SWMA.navy": __vite_glob_2_22,
+    "../scripts/indicators/Stoch.navy": __vite_glob_2_23,
+    "../scripts/indicators/TSI.navy": __vite_glob_2_24,
+    "../scripts/indicators/VWMA.navy": __vite_glob_2_25,
+    "../scripts/indicators/WilliamsR.navy": __vite_glob_2_26
   });
   class Scripts {
     constructor(id) {
@@ -4583,12 +4893,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     }
     async init(srcs) {
       this.srcLib = Object.values(Overlays).map((x) => x.default);
+      this.srcLib.push(...Object.values(Tools).map((x) => x.default));
       this.srcLib.push(...Object.values(Indicators).map((x) => x.default));
       this.srcLib.push(...srcs);
       this.prefabs = {};
       this.iScripts = {};
       this.parse();
       this.ww.exec("upload-scripts", {
+        // Removing make() functions
         prefabs: Object.keys(this.prefabs).reduce((a, k) => {
           a[k] = {
             name: this.prefabs[k].name,
@@ -4679,6 +4991,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     ctx.lineTo(
       x05,
       Math.floor(Math.max(data2.o, data2.c))
+      //+ (data.o === data.c ? 1 : 0)
     );
   }
   function candleWick(ctx, data2) {
@@ -4830,6 +5143,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       return props.colorBodyDw;
     }
   }
+  function rescaleFont(fontString, newSize) {
+    let pair = fontString.split("px");
+    return newSize + "px" + pair[1];
+  }
   function avgVolume(ctx, core, props, cnv, vIndex = 5) {
     let i1 = core.view.i1;
     let i2 = core.view.i2;
@@ -4854,8 +5171,57 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     }
     ctx.stroke();
   }
+  function roundRect$2(ctx, x, y, width, height, radius, fill = true, stroke) {
+    if (typeof radius === "undefined") {
+      radius = 5;
+    }
+    if (typeof radius === "number") {
+      radius = { tl: radius, tr: radius, br: radius, bl: radius };
+    } else {
+      var defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
+      for (var side in defaultRadius) {
+        radius[side] = radius[side] || defaultRadius[side];
+      }
+    }
+    ctx.beginPath();
+    ctx.moveTo(x + radius.tl, y);
+    ctx.lineTo(x + width - radius.tr, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+    ctx.lineTo(x + width, y + height - radius.br);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+    ctx.lineTo(x + radius.bl, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+    ctx.lineTo(x, y + radius.tl);
+    ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+    ctx.closePath();
+    if (fill) {
+      ctx.fill();
+    }
+    if (stroke) {
+      ctx.stroke();
+    }
+  }
+  function drawArrow(context, fromX, fromY, toX, toY, color, head = true) {
+    const headLength = 7;
+    const dx = toX - fromX;
+    const dy = toY - fromY;
+    const angle = Math.atan2(dy, dx);
+    context.beginPath();
+    context.moveTo(fromX, fromY);
+    context.lineTo(toX, toY);
+    if (head) {
+      context.moveTo(toX, toY);
+      context.lineTo(toX - headLength * Math.cos(angle - Math.PI / 5), toY - headLength * Math.sin(angle - Math.PI / 5));
+      context.moveTo(toX, toY);
+      context.lineTo(toX - headLength * Math.cos(angle + Math.PI / 5), toY - headLength * Math.sin(angle + Math.PI / 5));
+    }
+    context.strokeStyle = color;
+    context.lineWidth = 1;
+    context.stroke();
+  }
   const formatCash = Utils.formatCash;
   class OverlayEnv {
+    // TODO: auto update on prop/data change
     constructor(id, ovSrc, layout, props) {
       let hub = DataHub$1.instance(props.id);
       let meta = MetaHub$1.instance(props.id);
@@ -4864,6 +5230,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.ovSrc = ovSrc;
       this.overlay = null;
       this.id = id;
+      this.handlers = {};
       this.$core = { hub, meta, scan };
       this.update(ovSrc, layout, props);
       this.$props = ovSrc.props;
@@ -4878,14 +5245,20 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         volumeBar,
         fastSma,
         avgVolume,
-        candleColor
+        candleColor,
+        roundRect: roundRect$2,
+        rescaleFont,
+        drawArrow,
+        Utils
       };
     }
+    // Defines new property
     prop(name, obj = {}) {
       if (!(name in this.$props)) {
         this.$props[name] = obj.def;
       }
     }
+    // Update evnironment variables
     update(overlay, layout, props) {
       if (!layout)
         return;
@@ -4908,9 +5281,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       core.props = props;
       core.indexOffset = overlay.indexOffset;
     }
+    // Build the final layout API by merging
+    // the selected scale to the rest layout
+    // variables
     buildLayout(layout, range, overlay) {
       let obj = {};
-      this.scaleId = this.getScaleId(layout);
+      this.scaleId = /*this.scaleId !== undefined ?
+      this.scaleId :*/
+      this.getScaleId(layout);
       let s = layout.scales[this.scaleId];
       return layoutFn(
         Object.assign(obj, layout, s),
@@ -4918,6 +5296,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         overlay
       );
     }
+    // Get the scale id of this overlay
     getScaleId(layout) {
       let scales = layout.scales;
       for (var i in scales) {
@@ -4926,6 +5305,32 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           return i;
         }
       }
+    }
+    watchProp(propName, handler) {
+      this.handlers[propName] = this.handlers[propName] || [];
+      this.handlers[propName].push(handler);
+      let oldValue = this.$props[propName];
+      delete this.$props[propName];
+      Object.defineProperty(this.$props, propName, {
+        get: () => oldValue,
+        set: (newValue) => {
+          let tmp = oldValue;
+          oldValue = newValue;
+          for (let handler2 of this.handlers[propName]) {
+            handler2(newValue, tmp);
+          }
+        },
+        enumerable: true,
+        configurable: true
+      });
+    }
+    destroy() {
+      for (let prop in this.handlers) {
+        let value = this.$props[prop];
+        delete this.$props[prop];
+        this.$props[prop] = value;
+      }
+      this.handlers = {};
     }
   }
   class Layer {
@@ -5136,6 +5541,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         gridId: this.gridId,
         x: event.layerX,
         y: event.layerY - 1
+        // Align with the crosshair
       });
       this.calcOffset();
       this.propagate("mousemove", event);
@@ -5282,6 +5688,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.offsetX = -rect.x;
       this.offsetY = -rect.y;
     }
+    // Convert touch to "mouse" event
     touch2mouse(e) {
       this.calcOffset();
       return {
@@ -5298,6 +5705,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         gridId: this.gridId,
         x: event.center.x + this.offsetX,
         y: event.center.y + this.offsetY
+        //+ this.layout.offset
       }, add));
     }
     panFade(event) {
@@ -5403,7 +5811,9 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         destroy: this.destroy.bind(this)
       };
       this.env = {
-        update: this.envEpdate.bind(this)
+        update: this.envEpdate.bind(this),
+        destroy: () => {
+        }
       };
     }
     draw(ctx) {
@@ -5449,7 +5859,9 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         destroy: this.destroy.bind(this)
       };
       this.env = {
-        update: this.envEpdate.bind(this)
+        update: this.envEpdate.bind(this),
+        destroy: () => {
+        }
       };
     }
     draw(ctx) {
@@ -5626,7 +6038,9 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         drawSidebar: this.drawSidebar.bind(this)
       };
       this.env = {
-        update: this.envEpdate.bind(this)
+        update: this.envEpdate.bind(this),
+        destroy: () => {
+        }
       };
     }
     draw(ctx) {
@@ -5675,6 +6089,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.props = props;
       this.scaleId = this.getScaleId();
     }
+    // Get the scale id of this overlay
+    // TODO: more efficient method of getting ov scale
     getScaleId(ovId) {
       let scales = this.layout.scales;
       for (var i in scales) {
@@ -5725,9 +6141,24 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       c() {
         div = element("div");
         canvas_1 = element("canvas");
-        attr(canvas_1, "id", ctx[2]);
-        attr(div, "id", ctx[1]);
-        attr(div, "style", ctx[0]);
+        attr(
+          canvas_1,
+          "id",
+          /*canvasId*/
+          ctx[2]
+        );
+        attr(
+          div,
+          "id",
+          /*rrId*/
+          ctx[1]
+        );
+        attr(
+          div,
+          "style",
+          /*rrStyle*/
+          ctx[0]
+        );
         attr(div, "class", "nvjs-canvas-rendrer svelte-8n0n7w");
       },
       m(target, anchor) {
@@ -5735,8 +6166,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         append(div, canvas_1);
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1) {
-          attr(div, "style", ctx2[0]);
+        if (dirty & /*rrStyle*/
+        1) {
+          attr(
+            div,
+            "style",
+            /*rrStyle*/
+            ctx2[0]
+          );
         }
       },
       i: noop,
@@ -5848,7 +6285,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(3, layout = $$props2.layout);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 8) {
+      if ($$self.$$.dirty & /*layout*/
+      8) {
         $$invalidate(0, rrStyle = `
     left: ${layout.sbMax[0]}px;
     top: ${layout.offset || 0}px;
@@ -5856,13 +6294,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     height: ${layout.height}px;
 }`);
       }
-      if ($$self.$$.dirty & 8) {
+      if ($$self.$$.dirty & /*layout*/
+      8) {
         $$invalidate(11, width = layout.width);
       }
-      if ($$self.$$.dirty & 8) {
+      if ($$self.$$.dirty & /*layout*/
+      8) {
         $$invalidate(10, height = layout.height);
       }
-      if ($$self.$$.dirty & 3072) {
+      if ($$self.$$.dirty & /*width, height*/
+      3072) {
         resizeWatch();
       }
     };
@@ -5913,16 +6354,40 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   }
   function create_if_block$6(ctx) {
     let canvas;
-    let each_value = ctx[24];
-    let i = ctx[25];
+    let each_value = (
+      /*each_value*/
+      ctx[24]
+    );
+    let i = (
+      /*i*/
+      ctx[25]
+    );
     let current;
-    const assign_canvas = () => ctx[7](canvas, each_value, i);
-    const unassign_canvas = () => ctx[7](null, each_value, i);
+    const assign_canvas = () => (
+      /*canvas_binding*/
+      ctx[7](canvas, each_value, i)
+    );
+    const unassign_canvas = () => (
+      /*canvas_binding*/
+      ctx[7](null, each_value, i)
+    );
     let canvas_props = {
-      id: ctx[1],
-      layout: ctx[0],
-      props: ctx[2],
-      rr: ctx[23]
+      id: (
+        /*id*/
+        ctx[1]
+      ),
+      layout: (
+        /*layout*/
+        ctx[0]
+      ),
+      props: (
+        /*props*/
+        ctx[2]
+      ),
+      rr: (
+        /*rr*/
+        ctx[23]
+      )
     };
     canvas = new Canvas({ props: canvas_props });
     assign_canvas();
@@ -5935,21 +6400,33 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, dirty) {
-        if (each_value !== ctx2[24] || i !== ctx2[25]) {
+        if (each_value !== /*each_value*/
+        ctx2[24] || i !== /*i*/
+        ctx2[25]) {
           unassign_canvas();
-          each_value = ctx2[24];
-          i = ctx2[25];
+          each_value = /*each_value*/
+          ctx2[24];
+          i = /*i*/
+          ctx2[25];
           assign_canvas();
         }
         const canvas_changes = {};
-        if (dirty & 2)
-          canvas_changes.id = ctx2[1];
-        if (dirty & 1)
-          canvas_changes.layout = ctx2[0];
-        if (dirty & 4)
-          canvas_changes.props = ctx2[2];
-        if (dirty & 8)
-          canvas_changes.rr = ctx2[23];
+        if (dirty & /*id*/
+        2)
+          canvas_changes.id = /*id*/
+          ctx2[1];
+        if (dirty & /*layout*/
+        1)
+          canvas_changes.layout = /*layout*/
+          ctx2[0];
+        if (dirty & /*props*/
+        4)
+          canvas_changes.props = /*props*/
+          ctx2[2];
+        if (dirty & /*renderers*/
+        8)
+          canvas_changes.rr = /*rr*/
+          ctx2[23];
         canvas.$set(canvas_changes);
       },
       i(local) {
@@ -5971,7 +6448,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   function create_each_block$4(ctx) {
     let if_block_anchor;
     let current;
-    let if_block = ctx[23].ctxType === "Canvas" && create_if_block$6(ctx);
+    let if_block = (
+      /*rr*/
+      ctx[23].ctxType === "Canvas" && create_if_block$6(ctx)
+    );
     return {
       c() {
         if (if_block)
@@ -5985,10 +6465,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, dirty) {
-        if (ctx2[23].ctxType === "Canvas") {
+        if (
+          /*rr*/
+          ctx2[23].ctxType === "Canvas"
+        ) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty & 8) {
+            if (dirty & /*renderers*/
+            8) {
               transition_in(if_block, 1);
             }
           } else {
@@ -6026,7 +6510,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   function create_fragment$b(ctx) {
     let div;
     let current;
-    let each_value = ctx[3];
+    let each_value = (
+      /*renderers*/
+      ctx[3]
+    );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block$4(get_each_context$4(ctx, each_value, i));
@@ -6041,7 +6528,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           each_blocks[i].c();
         }
         attr(div, "class", "nvjs-grid svelte-1ctdodr");
-        attr(div, "style", ctx[4]);
+        attr(
+          div,
+          "style",
+          /*style*/
+          ctx[4]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -6053,8 +6545,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (dirty & 15) {
-          each_value = ctx2[3];
+        if (dirty & /*id, layout, props, renderers*/
+        15) {
+          each_value = /*renderers*/
+          ctx2[3];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
             const child_ctx = get_each_context$4(ctx2, each_value, i);
@@ -6074,8 +6568,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           check_outros();
         }
-        if (!current || dirty & 16) {
-          attr(div, "style", ctx2[4]);
+        if (!current || dirty & /*style*/
+        16) {
+          attr(
+            div,
+            "style",
+            /*style*/
+            ctx2[4]
+          );
         }
       },
       i(local) {
@@ -6152,6 +6652,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     function destroyLayers() {
       for (var layer of layers) {
         layer.overlay.destroy();
+        layer.env.destroy();
       }
     }
     function makeLayers() {
@@ -6192,6 +6693,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             layers: [],
             id: rrs.length,
             ref: null
+            // Renderer reference
           };
           rrs.push(last);
           lastCtx = l.ctxType;
@@ -6240,7 +6742,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(0, layout = $$props2.layout);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 5) {
+      if ($$self.$$.dirty & /*layout, props*/
+      5) {
         $$invalidate(4, style = `
     width: ${layout.width}px;
     height: ${layout.height}px;
@@ -6282,20 +6785,32 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     const child_ctx = ctx.slice();
     child_ctx[13] = list[i];
     child_ctx[15] = i;
-    const constants_0 = child_ctx[13].scaleSpecs.id;
+    const constants_0 = (
+      /*scale*/
+      child_ctx[13].scaleSpecs.id
+    );
     child_ctx[1] = constants_0;
     return child_ctx;
   }
   function create_each_block$3(ctx) {
     let div;
-    let t0_value = ctx[1] + "";
+    let t0_value = (
+      /*id*/
+      ctx[1] + ""
+    );
     let t0;
     let t1;
     let div_style_value;
     let mounted;
     let dispose;
     function click_handler() {
-      return ctx[10](ctx[1]);
+      return (
+        /*click_handler*/
+        ctx[10](
+          /*id*/
+          ctx[1]
+        )
+      );
     }
     return {
       c() {
@@ -6303,7 +6818,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         t0 = text(t0_value);
         t1 = space();
         attr(div, "class", "scale-button svelte-16w6gr6");
-        attr(div, "style", div_style_value = ctx[2](ctx[1]));
+        attr(div, "style", div_style_value = /*sbStyle*/
+        ctx[2](
+          /*id*/
+          ctx[1]
+        ));
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -6316,9 +6835,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(new_ctx, dirty) {
         ctx = new_ctx;
-        if (dirty & 1 && t0_value !== (t0_value = ctx[1] + ""))
+        if (dirty & /*scales*/
+        1 && t0_value !== (t0_value = /*id*/
+        ctx[1] + ""))
           set_data(t0, t0_value);
-        if (dirty & 5 && div_style_value !== (div_style_value = ctx[2](ctx[1]))) {
+        if (dirty & /*sbStyle, scales*/
+        5 && div_style_value !== (div_style_value = /*sbStyle*/
+        ctx[2](
+          /*id*/
+          ctx[1]
+        ))) {
           attr(div, "style", div_style_value);
         }
       },
@@ -6334,7 +6860,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let div;
     let div_transition;
     let current;
-    let each_value = ctx[0];
+    let each_value = (
+      /*scales*/
+      ctx[0]
+    );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block$3(get_each_context$3(ctx, each_value, i));
@@ -6346,8 +6875,18 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           each_blocks[i].c();
         }
         attr(div, "class", "scale-selector svelte-16w6gr6");
-        attr(div, "id", ctx[4]);
-        attr(div, "style", ctx[3]);
+        attr(
+          div,
+          "id",
+          /*ssId*/
+          ctx[4]
+        );
+        attr(
+          div,
+          "style",
+          /*ssStyle*/
+          ctx[3]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -6359,8 +6898,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (dirty & 37) {
-          each_value = ctx2[0];
+        if (dirty & /*sbStyle, scales, onClick*/
+        37) {
+          each_value = /*scales*/
+          ctx2[0];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
             const child_ctx = get_each_context$3(ctx2, each_value, i);
@@ -6377,8 +6918,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           each_blocks.length = each_value.length;
         }
-        if (!current || dirty & 8) {
-          attr(div, "style", ctx2[3]);
+        if (!current || dirty & /*ssStyle*/
+        8) {
+          attr(
+            div,
+            "style",
+            /*ssStyle*/
+            ctx2[3]
+          );
         }
       },
       i(local) {
@@ -6440,7 +6987,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(8, side = $$props2.side);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 129) {
+      if ($$self.$$.dirty & /*layout, scales*/
+      129) {
         $$invalidate(9, specs = function ssWidth() {
           let obj = {};
           let sb2 = layout.sbMax[S];
@@ -6465,7 +7013,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           return obj;
         }());
       }
-      if ($$self.$$.dirty & 576) {
+      if ($$self.$$.dirty & /*specs, props*/
+      576) {
         $$invalidate(3, ssStyle = `
     grid-template-columns: ${specs.tmp};
     font: ${props.config.FONT};
@@ -6473,7 +7022,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     margin-left: ${specs.ssm}px;
 `);
       }
-      if ($$self.$$.dirty & 704) {
+      if ($$self.$$.dirty & /*layout, props, specs*/
+      704) {
         $$invalidate(2, sbStyle = (i) => {
           let sel = i === layout.settings.scaleSideIdxs[S];
           let color = sel ? props.colors.text : props.colors.scale;
@@ -6528,11 +7078,26 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let current;
     scaleselector = new ScaleSelector({
       props: {
-        id: ctx[1],
-        props: ctx[2],
-        layout: ctx[0],
-        scales: ctx[4],
-        side: ctx[3]
+        id: (
+          /*id*/
+          ctx[1]
+        ),
+        props: (
+          /*props*/
+          ctx[2]
+        ),
+        layout: (
+          /*layout*/
+          ctx[0]
+        ),
+        scales: (
+          /*scales*/
+          ctx[4]
+        ),
+        side: (
+          /*side*/
+          ctx[3]
+        )
       }
     });
     return {
@@ -6545,16 +7110,26 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const scaleselector_changes = {};
-        if (dirty[0] & 2)
-          scaleselector_changes.id = ctx2[1];
-        if (dirty[0] & 4)
-          scaleselector_changes.props = ctx2[2];
-        if (dirty[0] & 1)
-          scaleselector_changes.layout = ctx2[0];
-        if (dirty[0] & 16)
-          scaleselector_changes.scales = ctx2[4];
-        if (dirty[0] & 8)
-          scaleselector_changes.side = ctx2[3];
+        if (dirty[0] & /*id*/
+        2)
+          scaleselector_changes.id = /*id*/
+          ctx2[1];
+        if (dirty[0] & /*props*/
+        4)
+          scaleselector_changes.props = /*props*/
+          ctx2[2];
+        if (dirty[0] & /*layout*/
+        1)
+          scaleselector_changes.layout = /*layout*/
+          ctx2[0];
+        if (dirty[0] & /*scales*/
+        16)
+          scaleselector_changes.scales = /*scales*/
+          ctx2[4];
+        if (dirty[0] & /*side*/
+        8)
+          scaleselector_changes.side = /*side*/
+          ctx2[3];
         scaleselector.$set(scaleselector_changes);
       },
       i(local) {
@@ -6579,7 +7154,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let current;
     let mounted;
     let dispose;
-    let if_block = ctx[4].length > 1 && ctx[5] && create_if_block$5(ctx);
+    let if_block = (
+      /*scales*/
+      ctx[4].length > 1 && /*showSwitch*/
+      ctx[5] && create_if_block$5(ctx)
+    );
     return {
       c() {
         div = element("div");
@@ -6587,9 +7166,24 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         t = space();
         if (if_block)
           if_block.c();
-        attr(canvas_1, "id", ctx[8]);
-        attr(div, "id", ctx[7]);
-        attr(div, "style", ctx[6]);
+        attr(
+          canvas_1,
+          "id",
+          /*canvasId*/
+          ctx[8]
+        );
+        attr(
+          div,
+          "id",
+          /*sbId*/
+          ctx[7]
+        );
+        attr(
+          div,
+          "style",
+          /*sbStyle*/
+          ctx[6]
+        );
         attr(div, "class", "nvjs-sidebar svelte-gpuvhh");
       },
       m(target, anchor) {
@@ -6601,18 +7195,38 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
         if (!mounted) {
           dispose = [
-            listen(div, "click", ctx[9]),
-            listen(div, "mouseover", ctx[10]),
-            listen(div, "mouseleave", ctx[11])
+            listen(
+              div,
+              "click",
+              /*onClick*/
+              ctx[9]
+            ),
+            listen(
+              div,
+              "mouseover",
+              /*onMouseOver*/
+              ctx[10]
+            ),
+            listen(
+              div,
+              "mouseleave",
+              /*onMouseLeave*/
+              ctx[11]
+            )
           ];
           mounted = true;
         }
       },
       p(ctx2, dirty) {
-        if (ctx2[4].length > 1 && ctx2[5]) {
+        if (
+          /*scales*/
+          ctx2[4].length > 1 && /*showSwitch*/
+          ctx2[5]
+        ) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty[0] & 48) {
+            if (dirty[0] & /*scales, showSwitch*/
+            48) {
               transition_in(if_block, 1);
             }
           } else {
@@ -6628,8 +7242,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           });
           check_outros();
         }
-        if (!current || dirty[0] & 64) {
-          attr(div, "style", ctx2[6]);
+        if (!current || dirty[0] & /*sbStyle*/
+        64) {
+          attr(
+            div,
+            "style",
+            /*sbStyle*/
+            ctx2[6]
+          );
         }
       },
       i(local) {
@@ -6862,7 +7482,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(4, scales = $$props2.scales);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 5) {
+      if ($$self.$$.dirty[0] & /*layout, props*/
+      5) {
         $$invalidate(6, sbStyle = `
     left: ${S * (layout.width + layout.sbMax[0])}px;
     top: ${layout.offset || 0}px;
@@ -6871,16 +7492,20 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     height: ${layout.height}px;
 `);
       }
-      if ($$self.$$.dirty[0] & 1) {
+      if ($$self.$$.dirty[0] & /*layout*/
+      1) {
         scale = getCurrentScale();
       }
-      if ($$self.$$.dirty[0] & 1) {
+      if ($$self.$$.dirty[0] & /*layout*/
+      1) {
         $$invalidate(14, width = layout.width);
       }
-      if ($$self.$$.dirty[0] & 1) {
+      if ($$self.$$.dirty[0] & /*layout*/
+      1) {
         $$invalidate(13, height = layout.height);
       }
-      if ($$self.$$.dirty[0] & 24576) {
+      if ($$self.$$.dirty[0] & /*width, height*/
+      24576) {
         resizeWatch();
       }
     };
@@ -6932,16 +7557,32 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     return {
       c() {
         div = element("div");
-        attr(div, "id", ctx[3]);
-        attr(div, "style", ctx[1]);
+        attr(
+          div,
+          "id",
+          /*stubId*/
+          ctx[3]
+        );
+        attr(
+          div,
+          "style",
+          /*stubStyle*/
+          ctx[1]
+        );
         attr(div, "class", "nvjs-sidebar-stub svelte-yr5ja6");
       },
       m(target, anchor) {
         insert(target, div, anchor);
       },
       p(ctx2, dirty) {
-        if (dirty & 2) {
-          attr(div, "style", ctx2[1]);
+        if (dirty & /*stubStyle*/
+        2) {
+          attr(
+            div,
+            "style",
+            /*stubStyle*/
+            ctx2[1]
+          );
         }
       },
       d(detaching) {
@@ -6952,7 +7593,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   }
   function create_fragment$8(ctx) {
     let if_block_anchor;
-    let if_block = ctx[0].sbMax[ctx[2]] && create_if_block$4(ctx);
+    let if_block = (
+      /*layout*/
+      ctx[0].sbMax[
+        /*S*/
+        ctx[2]
+      ] && create_if_block$4(ctx)
+    );
     return {
       c() {
         if (if_block)
@@ -6965,7 +7612,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         insert(target, if_block_anchor, anchor);
       },
       p(ctx2, [dirty]) {
-        if (ctx2[0].sbMax[ctx2[2]]) {
+        if (
+          /*layout*/
+          ctx2[0].sbMax[
+            /*S*/
+            ctx2[2]
+          ]
+        ) {
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
@@ -7007,7 +7660,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(6, side = $$props2.side);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 113) {
+      if ($$self.$$.dirty & /*layout, id, side, props*/
+      113) {
         $$invalidate(1, stubStyle = `
     left: ${S * (layout.width + layout.sbMax[0])}px;
     top: ${layout.offset || 0}px;
@@ -7053,18 +7707,32 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       c() {
         div = element("div");
         attr(div, "class", "nvjs-eye svelte-1cdflqk");
-        attr(div, "style", ctx[0]);
+        attr(
+          div,
+          "style",
+          /*eyeStyle*/
+          ctx[0]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
         if (!mounted) {
-          dispose = listen(div, "click", stop_propagation(ctx[1]));
+          dispose = listen(div, "click", stop_propagation(
+            /*onDisplayClick*/
+            ctx[1]
+          ));
           mounted = true;
         }
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1) {
-          attr(div, "style", ctx2[0]);
+        if (dirty & /*eyeStyle*/
+        1) {
+          attr(
+            div,
+            "style",
+            /*eyeStyle*/
+            ctx2[0]
+          );
         }
       },
       i: noop,
@@ -7107,13 +7775,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(5, height = $$props2.height);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 8) {
+      if ($$self.$$.dirty & /*ov*/
+      8) {
         $$invalidate(7, display = ov.settings.display !== false);
       }
-      if ($$self.$$.dirty & 128) {
+      if ($$self.$$.dirty & /*display*/
+      128) {
         $$invalidate(8, state = display ? "open" : "closed");
       }
-      if ($$self.$$.dirty & 288) {
+      if ($$self.$$.dirty & /*state, height*/
+      288) {
         $$invalidate(0, eyeStyle = `
     background-image: url(${icons[state + "-eye"]});
     background-size: contain;
@@ -7167,20 +7838,275 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     child_ctx[46] = i;
     return child_ctx;
   }
-  function create_if_block_9(ctx) {
+  function create_if_block$3(ctx) {
+    let div;
+    let t0;
+    let span;
+    let t1;
+    let t2;
+    let t3;
+    let t4;
+    let t5;
+    let current;
+    let mounted;
+    let dispose;
+    let if_block0 = (
+      /*ov*/
+      ctx[1].main && /*props*/
+      ctx[2].showLogo && create_if_block_10(ctx)
+    );
+    let if_block1 = (
+      /*ov*/
+      ctx[1].main && create_if_block_9(ctx)
+    );
+    let if_block2 = (
+      /*display*/
+      ctx[7] && !/*hover*/
+      ctx[3] && create_if_block_3(ctx)
+    );
+    let if_block3 = !/*display*/
+    ctx[7] && !/*hover*/
+    ctx[3] && create_if_block_2$1(ctx);
+    let if_block4 = (
+      /*hover*/
+      ctx[3] && create_if_block_1$1(ctx)
+    );
+    return {
+      c() {
+        div = element("div");
+        if (if_block0)
+          if_block0.c();
+        t0 = space();
+        span = element("span");
+        t1 = text(
+          /*name*/
+          ctx[19]
+        );
+        t2 = space();
+        if (if_block1)
+          if_block1.c();
+        t3 = space();
+        if (if_block2)
+          if_block2.c();
+        t4 = space();
+        if (if_block3)
+          if_block3.c();
+        t5 = space();
+        if (if_block4)
+          if_block4.c();
+        attr(span, "class", "nvjs-ll-name svelte-5spisq");
+        attr(div, "class", "nvjs-legend-line svelte-5spisq");
+        attr(
+          div,
+          "style",
+          /*style*/
+          ctx[14]
+        );
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        if (if_block0)
+          if_block0.m(div, null);
+        append(div, t0);
+        append(div, span);
+        append(span, t1);
+        append(span, t2);
+        if (if_block1)
+          if_block1.m(span, null);
+        ctx[32](span);
+        append(div, t3);
+        if (if_block2)
+          if_block2.m(div, null);
+        append(div, t4);
+        if (if_block3)
+          if_block3.m(div, null);
+        append(div, t5);
+        if (if_block4)
+          if_block4.m(div, null);
+        ctx[34](div);
+        current = true;
+        if (!mounted) {
+          dispose = [
+            listen(
+              div,
+              "mousemove",
+              /*onMouseMove*/
+              ctx[20]
+            ),
+            listen(
+              div,
+              "mouseleave",
+              /*onMouseLeave*/
+              ctx[21]
+            ),
+            listen(
+              div,
+              "click",
+              /*onClick*/
+              ctx[22]
+            ),
+            listen(div, "keypress", null)
+          ];
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (
+          /*ov*/
+          ctx2[1].main && /*props*/
+          ctx2[2].showLogo
+        ) {
+          if (if_block0) {
+            if_block0.p(ctx2, dirty);
+          } else {
+            if_block0 = create_if_block_10(ctx2);
+            if_block0.c();
+            if_block0.m(div, t0);
+          }
+        } else if (if_block0) {
+          if_block0.d(1);
+          if_block0 = null;
+        }
+        if (!current || dirty[0] & /*name*/
+        524288)
+          set_data(
+            t1,
+            /*name*/
+            ctx2[19]
+          );
+        if (
+          /*ov*/
+          ctx2[1].main
+        ) {
+          if (if_block1) {
+            if_block1.p(ctx2, dirty);
+          } else {
+            if_block1 = create_if_block_9(ctx2);
+            if_block1.c();
+            if_block1.m(span, null);
+          }
+        } else if (if_block1) {
+          if_block1.d(1);
+          if_block1 = null;
+        }
+        if (
+          /*display*/
+          ctx2[7] && !/*hover*/
+          ctx2[3]
+        ) {
+          if (if_block2) {
+            if_block2.p(ctx2, dirty);
+          } else {
+            if_block2 = create_if_block_3(ctx2);
+            if_block2.c();
+            if_block2.m(div, t4);
+          }
+        } else if (if_block2) {
+          if_block2.d(1);
+          if_block2 = null;
+        }
+        if (!/*display*/
+        ctx2[7] && !/*hover*/
+        ctx2[3]) {
+          if (if_block3) {
+            if_block3.p(ctx2, dirty);
+          } else {
+            if_block3 = create_if_block_2$1(ctx2);
+            if_block3.c();
+            if_block3.m(div, t5);
+          }
+        } else if (if_block3) {
+          if_block3.d(1);
+          if_block3 = null;
+        }
+        if (
+          /*hover*/
+          ctx2[3]
+        ) {
+          if (if_block4) {
+            if_block4.p(ctx2, dirty);
+            if (dirty[0] & /*hover*/
+            8) {
+              transition_in(if_block4, 1);
+            }
+          } else {
+            if_block4 = create_if_block_1$1(ctx2);
+            if_block4.c();
+            transition_in(if_block4, 1);
+            if_block4.m(div, null);
+          }
+        } else if (if_block4) {
+          group_outros();
+          transition_out(if_block4, 1, 1, () => {
+            if_block4 = null;
+          });
+          check_outros();
+        }
+        if (!current || dirty[0] & /*style*/
+        16384) {
+          attr(
+            div,
+            "style",
+            /*style*/
+            ctx2[14]
+          );
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(if_block4);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block4);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        if (if_block0)
+          if_block0.d();
+        if (if_block1)
+          if_block1.d();
+        ctx[32](null);
+        if (if_block2)
+          if_block2.d();
+        if (if_block3)
+          if_block3.d();
+        if (if_block4)
+          if_block4.d();
+        ctx[34](null);
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+  }
+  function create_if_block_10(ctx) {
     let div;
     return {
       c() {
         div = element("div");
         attr(div, "class", "nvjs-logo svelte-5spisq");
-        attr(div, "style", ctx[16]);
+        attr(
+          div,
+          "style",
+          /*logoStyle*/
+          ctx[17]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 65536) {
-          attr(div, "style", ctx2[16]);
+        if (dirty[0] & /*logoStyle*/
+        131072) {
+          attr(
+            div,
+            "style",
+            /*logoStyle*/
+            ctx2[17]
+          );
         }
       },
       d(detaching) {
@@ -7189,20 +8115,31 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block_8(ctx) {
+  function create_if_block_9(ctx) {
     let span;
     return {
       c() {
         span = element("span");
         attr(span, "class", "king-icon svelte-5spisq");
-        attr(span, "style", ctx[14]);
+        attr(
+          span,
+          "style",
+          /*kingStyle*/
+          ctx[15]
+        );
       },
       m(target, anchor) {
         insert(target, span, anchor);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 16384) {
-          attr(span, "style", ctx2[14]);
+        if (dirty[0] & /*kingStyle*/
+        32768) {
+          attr(
+            span,
+            "style",
+            /*kingStyle*/
+            ctx2[15]
+          );
         }
       },
       d(detaching) {
@@ -7211,15 +8148,24 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block_2$1(ctx) {
+  function create_if_block_3(ctx) {
     let span;
     function select_block_type(ctx2, dirty) {
-      if (!ctx2[12] && !ctx2[11])
-        return create_if_block_3;
-      if (ctx2[11] && ctx2[8].length)
-        return create_if_block_6;
-      if (ctx2[8].length)
+      if (!/*legend*/
+      ctx2[13] && !/*legendHtml*/
+      ctx2[12])
+        return create_if_block_4;
+      if (
+        /*legendHtml*/
+        ctx2[12] && /*data*/
+        ctx2[8].length
+      )
         return create_if_block_7;
+      if (
+        /*data*/
+        ctx2[8].length
+      )
+        return create_if_block_8;
     }
     let current_block_type = select_block_type(ctx);
     let if_block = current_block_type && current_block_type(ctx);
@@ -7229,7 +8175,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         if (if_block)
           if_block.c();
         attr(span, "class", "nvjs-ll-data svelte-5spisq");
-        attr(span, "style", ctx[17]);
+        attr(
+          span,
+          "style",
+          /*dataStyle*/
+          ctx[18]
+        );
       },
       m(target, anchor) {
         insert(target, span, anchor);
@@ -7248,8 +8199,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             if_block.m(span, null);
           }
         }
-        if (dirty[0] & 131072) {
-          attr(span, "style", ctx2[17]);
+        if (dirty[0] & /*dataStyle*/
+        262144) {
+          attr(
+            span,
+            "style",
+            /*dataStyle*/
+            ctx2[18]
+          );
         }
       },
       d(detaching) {
@@ -7261,9 +8218,17 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block_7(ctx) {
+  function create_if_block_8(ctx) {
     let each_1_anchor;
-    let each_value_1 = ctx[12](ctx[8], ctx[10]);
+    let each_value_1 = (
+      /*legend*/
+      ctx[13](
+        /*data*/
+        ctx[8],
+        /*prec*/
+        ctx[11]
+      )
+    );
     let each_blocks = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
       each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
@@ -7284,8 +8249,15 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         insert(target, each_1_anchor, anchor);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 4199680) {
-          each_value_1 = ctx2[12](ctx2[8], ctx2[10]);
+        if (dirty[0] & /*legend, data, prec, formatter*/
+        8399104) {
+          each_value_1 = /*legend*/
+          ctx2[13](
+            /*data*/
+            ctx2[8],
+            /*prec*/
+            ctx2[11]
+          );
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
             const child_ctx = get_each_context_1(ctx2, each_value_1, i);
@@ -7310,9 +8282,19 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block_6(ctx) {
+  function create_if_block_7(ctx) {
     let html_tag;
-    let raw_value = ctx[11](ctx[8], ctx[10], ctx[22]) + "";
+    let raw_value = (
+      /*legendHtml*/
+      ctx[12](
+        /*data*/
+        ctx[8],
+        /*prec*/
+        ctx[11],
+        /*formatter*/
+        ctx[23]
+      ) + ""
+    );
     let html_anchor;
     return {
       c() {
@@ -7325,7 +8307,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         insert(target, html_anchor, anchor);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 3328 && raw_value !== (raw_value = ctx2[11](ctx2[8], ctx2[10], ctx2[22]) + ""))
+        if (dirty[0] & /*legendHtml, data, prec*/
+        6400 && raw_value !== (raw_value = /*legendHtml*/
+        ctx2[12](
+          /*data*/
+          ctx2[8],
+          /*prec*/
+          ctx2[11],
+          /*formatter*/
+          ctx2[23]
+        ) + ""))
           html_tag.p(raw_value);
       },
       d(detaching) {
@@ -7336,9 +8327,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block_3(ctx) {
+  function create_if_block_4(ctx) {
     let each_1_anchor;
-    let each_value = ctx[8];
+    let each_value = (
+      /*data*/
+      ctx[8]
+    );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
@@ -7359,8 +8353,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         insert(target, each_1_anchor, anchor);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 4194560) {
-          each_value = ctx2[8];
+        if (dirty[0] & /*formatter, data*/
+        8388864) {
+          each_value = /*data*/
+          ctx2[8];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
             const child_ctx = get_each_context$2(ctx2, each_value, i);
@@ -7387,7 +8383,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   }
   function create_each_block_1(ctx) {
     let span;
-    let t0_value = ctx[22](ctx[44][0]) + "";
+    let t0_value = (
+      /*formatter*/
+      ctx[23](
+        /*v*/
+        ctx[44][0]
+      ) + ""
+    );
     let t0;
     let t1;
     let span_style_value;
@@ -7397,7 +8399,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         t0 = text(t0_value);
         t1 = space();
         attr(span, "class", "nvjs-ll-value");
-        attr(span, "style", span_style_value = `color: ${ctx[44][1]}`);
+        attr(span, "style", span_style_value = `color: ${/*v*/
+        ctx[44][1]}`);
       },
       m(target, anchor) {
         insert(target, span, anchor);
@@ -7405,9 +8408,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         append(span, t1);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 5376 && t0_value !== (t0_value = ctx2[22](ctx2[44][0]) + ""))
+        if (dirty[0] & /*legend, data, prec*/
+        10496 && t0_value !== (t0_value = /*formatter*/
+        ctx2[23](
+          /*v*/
+          ctx2[44][0]
+        ) + ""))
           set_data(t0, t0_value);
-        if (dirty[0] & 5376 && span_style_value !== (span_style_value = `color: ${ctx2[44][1]}`)) {
+        if (dirty[0] & /*legend, data, prec*/
+        10496 && span_style_value !== (span_style_value = `color: ${/*v*/
+        ctx2[44][1]}`)) {
           attr(span, "style", span_style_value);
         }
       },
@@ -7417,11 +8427,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block_4(ctx) {
+  function create_if_block_5(ctx) {
     let if_block_anchor;
     function select_block_type_1(ctx2, dirty) {
-      if (ctx2[44] != null)
-        return create_if_block_5;
+      if (
+        /*v*/
+        ctx2[44] != null
+      )
+        return create_if_block_6;
       return create_else_block$2;
     }
     let current_block_type = select_block_type_1(ctx);
@@ -7472,9 +8485,15 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block_5(ctx) {
+  function create_if_block_6(ctx) {
     let span;
-    let t0_value = ctx[22](ctx[44]) + "";
+    let t0_value = (
+      /*formatter*/
+      ctx[23](
+        /*v*/
+        ctx[44]
+      ) + ""
+    );
     let t0;
     let t1;
     return {
@@ -7490,7 +8509,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         append(span, t1);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 256 && t0_value !== (t0_value = ctx2[22](ctx2[44]) + ""))
+        if (dirty[0] & /*data*/
+        256 && t0_value !== (t0_value = /*formatter*/
+        ctx2[23](
+          /*v*/
+          ctx2[44]
+        ) + ""))
           set_data(t0, t0_value);
       },
       d(detaching) {
@@ -7501,7 +8525,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   }
   function create_each_block$2(ctx) {
     let if_block_anchor;
-    let if_block = ctx[46] > 0 && create_if_block_4(ctx);
+    let if_block = (
+      /*i*/
+      ctx[46] > 0 && create_if_block_5(ctx)
+    );
     return {
       c() {
         if (if_block)
@@ -7514,7 +8541,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         insert(target, if_block_anchor, anchor);
       },
       p(ctx2, dirty) {
-        if (ctx2[46] > 0)
+        if (
+          /*i*/
+          ctx2[46] > 0
+        )
           if_block.p(ctx2, dirty);
       },
       d(detaching) {
@@ -7525,20 +8555,31 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block_1$1(ctx) {
+  function create_if_block_2$1(ctx) {
     let div;
     return {
       c() {
         div = element("div");
         attr(div, "class", "nvjs-eye svelte-5spisq");
-        attr(div, "style", ctx[15]);
+        attr(
+          div,
+          "style",
+          /*eyeStyle*/
+          ctx[16]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 32768) {
-          attr(div, "style", ctx2[15]);
+        if (dirty[0] & /*eyeStyle*/
+        65536) {
+          attr(
+            div,
+            "style",
+            /*eyeStyle*/
+            ctx2[16]
+          );
         }
       },
       d(detaching) {
@@ -7547,14 +8588,26 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     };
   }
-  function create_if_block$3(ctx) {
+  function create_if_block_1$1(ctx) {
     let legendcontrols;
     let current;
     let legendcontrols_props = {
-      gridId: ctx[0],
-      ov: ctx[1],
-      props: ctx[2],
-      height: ctx[6].height
+      gridId: (
+        /*gridId*/
+        ctx[0]
+      ),
+      ov: (
+        /*ov*/
+        ctx[1]
+      ),
+      props: (
+        /*props*/
+        ctx[2]
+      ),
+      height: (
+        /*boundary*/
+        ctx[6].height
+      )
     };
     legendcontrols = new LegendControls({ props: legendcontrols_props });
     ctx[33](legendcontrols);
@@ -7568,14 +8621,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const legendcontrols_changes = {};
-        if (dirty[0] & 1)
-          legendcontrols_changes.gridId = ctx2[0];
-        if (dirty[0] & 2)
-          legendcontrols_changes.ov = ctx2[1];
-        if (dirty[0] & 4)
-          legendcontrols_changes.props = ctx2[2];
-        if (dirty[0] & 64)
-          legendcontrols_changes.height = ctx2[6].height;
+        if (dirty[0] & /*gridId*/
+        1)
+          legendcontrols_changes.gridId = /*gridId*/
+          ctx2[0];
+        if (dirty[0] & /*ov*/
+        2)
+          legendcontrols_changes.ov = /*ov*/
+          ctx2[1];
+        if (dirty[0] & /*props*/
+        4)
+          legendcontrols_changes.props = /*props*/
+          ctx2[2];
+        if (dirty[0] & /*boundary*/
+        64)
+          legendcontrols_changes.height = /*boundary*/
+          ctx2[6].height;
         legendcontrols.$set(legendcontrols_changes);
       },
       i(local) {
@@ -7595,178 +8656,60 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     };
   }
   function create_fragment$6(ctx) {
-    let div;
-    let t0;
-    let span;
-    let t1;
-    let t2;
-    let t3;
-    let t4;
-    let t5;
+    let if_block_anchor;
     let current;
-    let mounted;
-    let dispose;
-    let if_block0 = ctx[1].main && ctx[2].showLogo && create_if_block_9(ctx);
-    let if_block1 = ctx[1].main && create_if_block_8(ctx);
-    let if_block2 = ctx[7] && !ctx[3] && create_if_block_2$1(ctx);
-    let if_block3 = !ctx[7] && !ctx[3] && create_if_block_1$1(ctx);
-    let if_block4 = ctx[3] && create_if_block$3(ctx);
+    let if_block = !/*legendFns*/
+    ctx[9].noLegend && create_if_block$3(ctx);
     return {
       c() {
-        div = element("div");
-        if (if_block0)
-          if_block0.c();
-        t0 = space();
-        span = element("span");
-        t1 = text(ctx[18]);
-        t2 = space();
-        if (if_block1)
-          if_block1.c();
-        t3 = space();
-        if (if_block2)
-          if_block2.c();
-        t4 = space();
-        if (if_block3)
-          if_block3.c();
-        t5 = space();
-        if (if_block4)
-          if_block4.c();
-        attr(span, "class", "nvjs-ll-name svelte-5spisq");
-        attr(div, "class", "nvjs-legend-line svelte-5spisq");
-        attr(div, "style", ctx[13]);
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
       },
       m(target, anchor) {
-        insert(target, div, anchor);
-        if (if_block0)
-          if_block0.m(div, null);
-        append(div, t0);
-        append(div, span);
-        append(span, t1);
-        append(span, t2);
-        if (if_block1)
-          if_block1.m(span, null);
-        ctx[32](span);
-        append(div, t3);
-        if (if_block2)
-          if_block2.m(div, null);
-        append(div, t4);
-        if (if_block3)
-          if_block3.m(div, null);
-        append(div, t5);
-        if (if_block4)
-          if_block4.m(div, null);
-        ctx[34](div);
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
         current = true;
-        if (!mounted) {
-          dispose = [
-            listen(div, "mousemove", ctx[19]),
-            listen(div, "mouseleave", ctx[20]),
-            listen(div, "click", ctx[21])
-          ];
-          mounted = true;
-        }
       },
       p(ctx2, dirty) {
-        if (ctx2[1].main && ctx2[2].showLogo) {
-          if (if_block0) {
-            if_block0.p(ctx2, dirty);
-          } else {
-            if_block0 = create_if_block_9(ctx2);
-            if_block0.c();
-            if_block0.m(div, t0);
-          }
-        } else if (if_block0) {
-          if_block0.d(1);
-          if_block0 = null;
-        }
-        if (!current || dirty[0] & 262144)
-          set_data(t1, ctx2[18]);
-        if (ctx2[1].main) {
-          if (if_block1) {
-            if_block1.p(ctx2, dirty);
-          } else {
-            if_block1 = create_if_block_8(ctx2);
-            if_block1.c();
-            if_block1.m(span, null);
-          }
-        } else if (if_block1) {
-          if_block1.d(1);
-          if_block1 = null;
-        }
-        if (ctx2[7] && !ctx2[3]) {
-          if (if_block2) {
-            if_block2.p(ctx2, dirty);
-          } else {
-            if_block2 = create_if_block_2$1(ctx2);
-            if_block2.c();
-            if_block2.m(div, t4);
-          }
-        } else if (if_block2) {
-          if_block2.d(1);
-          if_block2 = null;
-        }
-        if (!ctx2[7] && !ctx2[3]) {
-          if (if_block3) {
-            if_block3.p(ctx2, dirty);
-          } else {
-            if_block3 = create_if_block_1$1(ctx2);
-            if_block3.c();
-            if_block3.m(div, t5);
-          }
-        } else if (if_block3) {
-          if_block3.d(1);
-          if_block3 = null;
-        }
-        if (ctx2[3]) {
-          if (if_block4) {
-            if_block4.p(ctx2, dirty);
-            if (dirty[0] & 8) {
-              transition_in(if_block4, 1);
+        if (!/*legendFns*/
+        ctx2[9].noLegend) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+            if (dirty[0] & /*legendFns*/
+            512) {
+              transition_in(if_block, 1);
             }
           } else {
-            if_block4 = create_if_block$3(ctx2);
-            if_block4.c();
-            transition_in(if_block4, 1);
-            if_block4.m(div, null);
+            if_block = create_if_block$3(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
-        } else if (if_block4) {
+        } else if (if_block) {
           group_outros();
-          transition_out(if_block4, 1, 1, () => {
-            if_block4 = null;
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
           });
           check_outros();
-        }
-        if (!current || dirty[0] & 8192) {
-          attr(div, "style", ctx2[13]);
         }
       },
       i(local) {
         if (current)
           return;
-        transition_in(if_block4);
+        transition_in(if_block);
         current = true;
       },
       o(local) {
-        transition_out(if_block4);
+        transition_out(if_block);
         current = false;
       },
       d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
         if (detaching)
-          detach(div);
-        if (if_block0)
-          if_block0.d();
-        if (if_block1)
-          if_block1.d();
-        ctx[32](null);
-        if (if_block2)
-          if_block2.d();
-        if (if_block3)
-          if_block3.d();
-        if (if_block4)
-          if_block4.d();
-        ctx[34](null);
-        mounted = false;
-        run_all(dispose);
+          detach(if_block_anchor);
       }
     };
   }
@@ -7832,10 +8775,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     }
     function onClick() {
       events.emit("select-overlay", { index: [gridId, ov.id] });
-      $$invalidate(24, selected = true);
+      $$invalidate(25, selected = true);
     }
     function onDeselect(event) {
-      $$invalidate(24, selected = false);
+      $$invalidate(25, selected = false);
     }
     function formatter(x, $prec = prec) {
       if (x == void 0)
@@ -7859,7 +8802,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     function legendcontrols_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
         ctrlRef = $$value;
-        $$invalidate(9, ctrlRef);
+        $$invalidate(10, ctrlRef);
       });
     }
     function div_binding($$value) {
@@ -7876,20 +8819,25 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       if ("props" in $$props2)
         $$invalidate(2, props = $$props2.props);
       if ("layout" in $$props2)
-        $$invalidate(23, layout = $$props2.layout);
+        $$invalidate(24, layout = $$props2.layout);
     };
     $$self.$$.update = () => {
       var _a;
-      if ($$self.$$.dirty[0] & 3) {
+      if ($$self.$$.dirty[0] & /*gridId, ov*/
+      3) {
         updId = `ll-${gridId}-${ov.id}`;
       }
-      if ($$self.$$.dirty[0] & 2) {
-        $$invalidate(18, name = (_a = ov.name) != null ? _a : `${ov.type || "Overlay"}-${ov.id}`);
+      if ($$self.$$.dirty[0] & /*ov*/
+      2) {
+        $$invalidate(19, name = (_a = ov.name) != null ? _a : `${ov.type || "Overlay"}-${ov.id}`);
       }
-      if ($$self.$$.dirty[0] & 4) {
+      if ($$self.$$.dirty[0] & /*props*/
+      4) {
         $$invalidate(31, fontSz = parseInt(props.config.FONT.split("px").shift()));
       }
-      if ($$self.$$.dirty[0] & 25165830 | $$self.$$.dirty[1] & 1) {
+      if ($$self.$$.dirty[0] & /*props, ov, selected, layout*/
+      50331654 | $$self.$$.dirty[1] & /*fontSz*/
+      1) {
         $$invalidate(30, styleBase = `
     font: ${props.config.FONT};
     font-size: ${fontSz + (ov.main ? 5 : 3)}px;
@@ -7905,30 +8853,37 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     border-color: ${selected ? props.colors.llSelect : "auto"} !important;
 `);
       }
-      if ($$self.$$.dirty[0] & 4) {
+      if ($$self.$$.dirty[0] & /*props*/
+      4) {
         $$invalidate(29, styleHover = `
     background: ${props.colors.back};
     border: 1px solid ${props.colors.grid};
 
 `);
       }
-      if ($$self.$$.dirty[0] & 6 | $$self.$$.dirty[1] & 1) {
-        $$invalidate(17, dataStyle = `
+      if ($$self.$$.dirty[0] & /*ov, props*/
+      6 | $$self.$$.dirty[1] & /*fontSz*/
+      1) {
+        $$invalidate(18, dataStyle = `
     font-size: ${fontSz + (ov.main ? 3 : 2)}px;
     color: ${props.colors.llValue}
 `);
       }
-      if ($$self.$$.dirty[0] & 2) {
+      if ($$self.$$.dirty[0] & /*ov*/
+      2) {
         $$invalidate(7, display = ov.settings.display !== false);
       }
-      if ($$self.$$.dirty[0] & 128) {
-        $$invalidate(25, state = display ? "open" : "closed");
+      if ($$self.$$.dirty[0] & /*display*/
+      128) {
+        $$invalidate(26, state = display ? "open" : "closed");
       }
-      if ($$self.$$.dirty[0] & 16) {
+      if ($$self.$$.dirty[0] & /*ref*/
+      16) {
         $$invalidate(6, boundary = ref ? ref.getBoundingClientRect() : {});
       }
-      if ($$self.$$.dirty[0] & 33554496) {
-        $$invalidate(15, eyeStyle = `
+      if ($$self.$$.dirty[0] & /*state, boundary*/
+      67108928) {
+        $$invalidate(16, eyeStyle = `
     background-image: url(${icons[state + "-eye"]});
     background-size: contain;
     background-repeat: no-repeat;
@@ -7936,7 +8891,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     margin-bottom: -2px;
 `);
       }
-      if ($$self.$$.dirty[0] & 64) {
+      if ($$self.$$.dirty[0] & /*boundary*/
+      64) {
         `
     width: ${boundary.width}px;
     height: ${boundary.height}px;
@@ -7945,43 +8901,53 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     left: -2px;
 `;
       }
-      if ($$self.$$.dirty[0] & 4) {
-        $$invalidate(27, values = props.cursor.values || []);
+      if ($$self.$$.dirty[0] & /*props*/
+      4) {
+        $$invalidate(28, values = props.cursor.values || []);
       }
-      if ($$self.$$.dirty[0] & 134217731) {
+      if ($$self.$$.dirty[0] & /*values, gridId, ov*/
+      268435459) {
         $$invalidate(8, data2 = (values[gridId] || [])[ov.id] || []);
       }
-      if ($$self.$$.dirty[0] & 392) {
-        $$invalidate(14, kingStyle = `
+      if ($$self.$$.dirty[0] & /*hover, display, data*/
+      392) {
+        $$invalidate(15, kingStyle = `
     background-image: url(${icons["king3"]});
     background-size: contain;
     background-repeat: no-repeat;
     margin-left: ${hover || !display || !data2.length ? 7 : 3}px;
 `);
       }
-      if ($$self.$$.dirty[0] & 32) {
+      if ($$self.$$.dirty[0] & /*nRef*/
+      32) {
         nBoundary = nRef ? nRef.getBoundingClientRect() : {};
       }
-      if ($$self.$$.dirty[0] & 1610612744) {
-        $$invalidate(13, style = styleBase + (hover ? styleHover : ""));
+      if ($$self.$$.dirty[0] & /*styleBase, hover, styleHover*/
+      1610612744) {
+        $$invalidate(14, style = styleBase + (hover ? styleHover : ""));
       }
-      if ($$self.$$.dirty[0] & 3) {
-        $$invalidate(28, legendFns = meta.getLegendFns(gridId, ov.id) || {});
+      if ($$self.$$.dirty[0] & /*gridId, ov*/
+      3) {
+        $$invalidate(9, legendFns = meta.getLegendFns(gridId, ov.id) || {});
       }
-      if ($$self.$$.dirty[0] & 268435456) {
-        $$invalidate(12, legend = legendFns.legend);
+      if ($$self.$$.dirty[0] & /*legendFns*/
+      512) {
+        $$invalidate(13, legend = legendFns.legend);
       }
-      if ($$self.$$.dirty[0] & 268435456) {
-        $$invalidate(11, legendHtml = legendFns.legendHtml);
+      if ($$self.$$.dirty[0] & /*legendFns*/
+      512) {
+        $$invalidate(12, legendHtml = legendFns.legendHtml);
       }
-      if ($$self.$$.dirty[0] & 8388608) {
-        $$invalidate(26, scale = findOverlayScale(layout.scales));
+      if ($$self.$$.dirty[0] & /*layout*/
+      16777216) {
+        $$invalidate(27, scale = findOverlayScale(layout.scales));
       }
-      if ($$self.$$.dirty[0] & 67108864) {
-        $$invalidate(10, prec = scale.prec);
+      if ($$self.$$.dirty[0] & /*scale*/
+      134217728) {
+        $$invalidate(11, prec = scale.prec);
       }
     };
-    $$invalidate(16, logoStyle = `
+    $$invalidate(17, logoStyle = `
     background-image: url(${logo[0]});
     background-size: contain;
     background-repeat: no-repeat;
@@ -7996,6 +8962,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       boundary,
       display,
       data2,
+      legendFns,
       ctrlRef,
       prec,
       legendHtml,
@@ -8015,7 +8982,6 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       state,
       scale,
       values,
-      legendFns,
       styleHover,
       styleBase,
       fontSz,
@@ -8027,7 +8993,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   class LegendLine extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance$6, create_fragment$6, safe_not_equal, { gridId: 0, ov: 1, props: 2, layout: 23 }, add_css$2, [-1, -1]);
+      init(this, options, instance$6, create_fragment$6, safe_not_equal, { gridId: 0, ov: 1, props: 2, layout: 24 }, add_css$2, [-1, -1]);
     }
   }
   function add_css$1(target) {
@@ -8042,7 +9008,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   function create_if_block$2(ctx) {
     let div;
     let current;
-    let each_value = ctx[5].panes()[ctx[0]].overlays;
+    let each_value = (
+      /*hub*/
+      ctx[5].panes()[
+        /*id*/
+        ctx[0]
+      ].overlays
+    );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
@@ -8057,7 +9029,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           each_blocks[i].c();
         }
         attr(div, "class", "nvjs-legend svelte-16ib1si");
-        attr(div, "style", ctx[4]);
+        attr(
+          div,
+          "style",
+          /*style*/
+          ctx[4]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -8069,8 +9046,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, dirty) {
-        if (dirty & 39) {
-          each_value = ctx2[5].panes()[ctx2[0]].overlays;
+        if (dirty & /*id, props, layout, hub*/
+        39) {
+          each_value = /*hub*/
+          ctx2[5].panes()[
+            /*id*/
+            ctx2[0]
+          ].overlays;
           let i;
           for (i = 0; i < each_value.length; i += 1) {
             const child_ctx = get_each_context$1(ctx2, each_value, i);
@@ -8090,8 +9072,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           check_outros();
         }
-        if (!current || dirty & 16) {
-          attr(div, "style", ctx2[4]);
+        if (!current || dirty & /*style*/
+        16) {
+          attr(
+            div,
+            "style",
+            /*style*/
+            ctx2[4]
+          );
         }
       },
       i(local) {
@@ -8121,10 +9109,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let current;
     legendline = new LegendLine({
       props: {
-        gridId: ctx[0],
-        props: ctx[1],
-        layout: ctx[2],
-        ov: ctx[9]
+        gridId: (
+          /*id*/
+          ctx[0]
+        ),
+        props: (
+          /*props*/
+          ctx[1]
+        ),
+        layout: (
+          /*layout*/
+          ctx[2]
+        ),
+        ov: (
+          /*ov*/
+          ctx[9]
+        )
       }
     });
     return {
@@ -8137,14 +9137,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const legendline_changes = {};
-        if (dirty & 1)
-          legendline_changes.gridId = ctx2[0];
-        if (dirty & 2)
-          legendline_changes.props = ctx2[1];
-        if (dirty & 4)
-          legendline_changes.layout = ctx2[2];
-        if (dirty & 1)
-          legendline_changes.ov = ctx2[9];
+        if (dirty & /*id*/
+        1)
+          legendline_changes.gridId = /*id*/
+          ctx2[0];
+        if (dirty & /*props*/
+        2)
+          legendline_changes.props = /*props*/
+          ctx2[1];
+        if (dirty & /*layout*/
+        4)
+          legendline_changes.layout = /*layout*/
+          ctx2[2];
+        if (dirty & /*id*/
+        1)
+          legendline_changes.ov = /*ov*/
+          ctx2[9];
         legendline.$set(legendline_changes);
       },
       i(local) {
@@ -8163,7 +9171,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     };
   }
   function create_key_block(ctx) {
-    let show_if = ctx[5].panes()[ctx[0]];
+    let show_if = (
+      /*hub*/
+      ctx[5].panes()[
+        /*id*/
+        ctx[0]
+      ]
+    );
     let if_block_anchor;
     let current;
     let if_block = show_if && create_if_block$2(ctx);
@@ -8180,12 +9194,18 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, dirty) {
-        if (dirty & 1)
-          show_if = ctx2[5].panes()[ctx2[0]];
+        if (dirty & /*id*/
+        1)
+          show_if = /*hub*/
+          ctx2[5].panes()[
+            /*id*/
+            ctx2[0]
+          ];
         if (show_if) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty & 1) {
+            if (dirty & /*id*/
+            1) {
               transition_in(if_block, 1);
             }
           } else {
@@ -8221,7 +9241,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     };
   }
   function create_fragment$5(ctx) {
-    let previous_key = ctx[3];
+    let previous_key = (
+      /*legendRR*/
+      ctx[3]
+    );
     let key_block_anchor;
     let current;
     let key_block = create_key_block(ctx);
@@ -8236,7 +9259,9 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (dirty & 8 && safe_not_equal(previous_key, previous_key = ctx2[3])) {
+        if (dirty & /*legendRR*/
+        8 && safe_not_equal(previous_key, previous_key = /*legendRR*/
+        ctx2[3])) {
           group_outros();
           transition_out(key_block, 1, 1, noop);
           check_outros();
@@ -8292,7 +9317,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(2, layout = $$props2.layout);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 4) {
+      if ($$self.$$.dirty & /*layout*/
+      4) {
         $$invalidate(4, style = `
     left: ${layout.sbMax[0] + 5}px;
     top: ${(layout.offset || 0) + 5}px;
@@ -8321,25 +9347,52 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let if_block1;
     let current;
     let grid_1_props = {
-      id: ctx[1],
-      props: ctx[2],
-      layout: ctx[0],
-      main: ctx[3]
+      id: (
+        /*id*/
+        ctx[1]
+      ),
+      props: (
+        /*props*/
+        ctx[2]
+      ),
+      layout: (
+        /*layout*/
+        ctx[0]
+      ),
+      main: (
+        /*main*/
+        ctx[3]
+      )
     };
     grid_1 = new Grid_1({ props: grid_1_props });
     ctx[10](grid_1);
     legend = new Legend({
       props: {
-        id: ctx[1],
-        props: ctx[2],
-        layout: ctx[0],
-        main: ctx[3]
+        id: (
+          /*id*/
+          ctx[1]
+        ),
+        props: (
+          /*props*/
+          ctx[2]
+        ),
+        layout: (
+          /*layout*/
+          ctx[0]
+        ),
+        main: (
+          /*main*/
+          ctx[3]
+        )
       }
     });
     const if_block_creators = [create_if_block_2, create_else_block_1];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
-      if (ctx2[9].length)
+      if (
+        /*leftSb*/
+        ctx2[9].length
+      )
         return 0;
       return 1;
     }
@@ -8348,7 +9401,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     const if_block_creators_1 = [create_if_block_1, create_else_block$1];
     const if_blocks_1 = [];
     function select_block_type_1(ctx2, dirty) {
-      if (ctx2[8].length)
+      if (
+        /*rightSb*/
+        ctx2[8].length
+      )
         return 0;
       return 1;
     }
@@ -8365,7 +9421,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         t2 = space();
         if_block1.c();
         attr(div, "class", "nvjs-pane svelte-9o7s1l");
-        attr(div, "style", ctx[7]);
+        attr(
+          div,
+          "style",
+          /*style*/
+          ctx[7]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -8380,24 +9441,40 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const grid_1_changes = {};
-        if (dirty & 2)
-          grid_1_changes.id = ctx2[1];
-        if (dirty & 4)
-          grid_1_changes.props = ctx2[2];
-        if (dirty & 1)
-          grid_1_changes.layout = ctx2[0];
-        if (dirty & 8)
-          grid_1_changes.main = ctx2[3];
+        if (dirty & /*id*/
+        2)
+          grid_1_changes.id = /*id*/
+          ctx2[1];
+        if (dirty & /*props*/
+        4)
+          grid_1_changes.props = /*props*/
+          ctx2[2];
+        if (dirty & /*layout*/
+        1)
+          grid_1_changes.layout = /*layout*/
+          ctx2[0];
+        if (dirty & /*main*/
+        8)
+          grid_1_changes.main = /*main*/
+          ctx2[3];
         grid_1.$set(grid_1_changes);
         const legend_changes = {};
-        if (dirty & 2)
-          legend_changes.id = ctx2[1];
-        if (dirty & 4)
-          legend_changes.props = ctx2[2];
-        if (dirty & 1)
-          legend_changes.layout = ctx2[0];
-        if (dirty & 8)
-          legend_changes.main = ctx2[3];
+        if (dirty & /*id*/
+        2)
+          legend_changes.id = /*id*/
+          ctx2[1];
+        if (dirty & /*props*/
+        4)
+          legend_changes.props = /*props*/
+          ctx2[2];
+        if (dirty & /*layout*/
+        1)
+          legend_changes.layout = /*layout*/
+          ctx2[0];
+        if (dirty & /*main*/
+        8)
+          legend_changes.main = /*main*/
+          ctx2[3];
         legend.$set(legend_changes);
         let previous_block_index = current_block_type_index;
         current_block_type_index = select_block_type(ctx2);
@@ -8439,8 +9516,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           transition_in(if_block1, 1);
           if_block1.m(div, null);
         }
-        if (!current || dirty & 128) {
-          attr(div, "style", ctx2[7]);
+        if (!current || dirty & /*style*/
+        128) {
+          attr(
+            div,
+            "style",
+            /*style*/
+            ctx2[7]
+          );
         }
       },
       i(local) {
@@ -8475,9 +9558,18 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let current;
     sidebarstub = new SidebarStub({
       props: {
-        id: ctx[1],
-        props: ctx[2],
-        layout: ctx[0],
+        id: (
+          /*id*/
+          ctx[1]
+        ),
+        props: (
+          /*props*/
+          ctx[2]
+        ),
+        layout: (
+          /*layout*/
+          ctx[0]
+        ),
         side: "left"
       }
     });
@@ -8491,12 +9583,18 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const sidebarstub_changes = {};
-        if (dirty & 2)
-          sidebarstub_changes.id = ctx2[1];
-        if (dirty & 4)
-          sidebarstub_changes.props = ctx2[2];
-        if (dirty & 1)
-          sidebarstub_changes.layout = ctx2[0];
+        if (dirty & /*id*/
+        2)
+          sidebarstub_changes.id = /*id*/
+          ctx2[1];
+        if (dirty & /*props*/
+        4)
+          sidebarstub_changes.props = /*props*/
+          ctx2[2];
+        if (dirty & /*layout*/
+        1)
+          sidebarstub_changes.layout = /*layout*/
+          ctx2[0];
         sidebarstub.$set(sidebarstub_changes);
       },
       i(local) {
@@ -8518,11 +9616,23 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let sidebar;
     let current;
     let sidebar_props = {
-      id: ctx[1],
-      props: ctx[2],
-      layout: ctx[0],
+      id: (
+        /*id*/
+        ctx[1]
+      ),
+      props: (
+        /*props*/
+        ctx[2]
+      ),
+      layout: (
+        /*layout*/
+        ctx[0]
+      ),
       side: "left",
-      scales: ctx[9]
+      scales: (
+        /*leftSb*/
+        ctx[9]
+      )
     };
     sidebar = new Sidebar({ props: sidebar_props });
     ctx[11](sidebar);
@@ -8536,14 +9646,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const sidebar_changes = {};
-        if (dirty & 2)
-          sidebar_changes.id = ctx2[1];
-        if (dirty & 4)
-          sidebar_changes.props = ctx2[2];
-        if (dirty & 1)
-          sidebar_changes.layout = ctx2[0];
-        if (dirty & 512)
-          sidebar_changes.scales = ctx2[9];
+        if (dirty & /*id*/
+        2)
+          sidebar_changes.id = /*id*/
+          ctx2[1];
+        if (dirty & /*props*/
+        4)
+          sidebar_changes.props = /*props*/
+          ctx2[2];
+        if (dirty & /*layout*/
+        1)
+          sidebar_changes.layout = /*layout*/
+          ctx2[0];
+        if (dirty & /*leftSb*/
+        512)
+          sidebar_changes.scales = /*leftSb*/
+          ctx2[9];
         sidebar.$set(sidebar_changes);
       },
       i(local) {
@@ -8567,9 +9685,18 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let current;
     sidebarstub = new SidebarStub({
       props: {
-        id: ctx[1],
-        props: ctx[2],
-        layout: ctx[0],
+        id: (
+          /*id*/
+          ctx[1]
+        ),
+        props: (
+          /*props*/
+          ctx[2]
+        ),
+        layout: (
+          /*layout*/
+          ctx[0]
+        ),
         side: "right"
       }
     });
@@ -8583,12 +9710,18 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const sidebarstub_changes = {};
-        if (dirty & 2)
-          sidebarstub_changes.id = ctx2[1];
-        if (dirty & 4)
-          sidebarstub_changes.props = ctx2[2];
-        if (dirty & 1)
-          sidebarstub_changes.layout = ctx2[0];
+        if (dirty & /*id*/
+        2)
+          sidebarstub_changes.id = /*id*/
+          ctx2[1];
+        if (dirty & /*props*/
+        4)
+          sidebarstub_changes.props = /*props*/
+          ctx2[2];
+        if (dirty & /*layout*/
+        1)
+          sidebarstub_changes.layout = /*layout*/
+          ctx2[0];
         sidebarstub.$set(sidebarstub_changes);
       },
       i(local) {
@@ -8610,11 +9743,23 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let sidebar;
     let current;
     let sidebar_props = {
-      id: ctx[1],
-      props: ctx[2],
-      layout: ctx[0],
+      id: (
+        /*id*/
+        ctx[1]
+      ),
+      props: (
+        /*props*/
+        ctx[2]
+      ),
+      layout: (
+        /*layout*/
+        ctx[0]
+      ),
       side: "right",
-      scales: ctx[8]
+      scales: (
+        /*rightSb*/
+        ctx[8]
+      )
     };
     sidebar = new Sidebar({ props: sidebar_props });
     ctx[12](sidebar);
@@ -8628,14 +9773,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const sidebar_changes = {};
-        if (dirty & 2)
-          sidebar_changes.id = ctx2[1];
-        if (dirty & 4)
-          sidebar_changes.props = ctx2[2];
-        if (dirty & 1)
-          sidebar_changes.layout = ctx2[0];
-        if (dirty & 256)
-          sidebar_changes.scales = ctx2[8];
+        if (dirty & /*id*/
+        2)
+          sidebar_changes.id = /*id*/
+          ctx2[1];
+        if (dirty & /*props*/
+        4)
+          sidebar_changes.props = /*props*/
+          ctx2[2];
+        if (dirty & /*layout*/
+        1)
+          sidebar_changes.layout = /*layout*/
+          ctx2[0];
+        if (dirty & /*rightSb*/
+        256)
+          sidebar_changes.scales = /*rightSb*/
+          ctx2[8];
         sidebar.$set(sidebar_changes);
       },
       i(local) {
@@ -8657,7 +9810,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   function create_fragment$4(ctx) {
     let if_block_anchor;
     let current;
-    let if_block = ctx[0] && create_if_block$1(ctx);
+    let if_block = (
+      /*layout*/
+      ctx[0] && create_if_block$1(ctx)
+    );
     return {
       c() {
         if (if_block)
@@ -8671,10 +9827,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (ctx2[0]) {
+        if (
+          /*layout*/
+          ctx2[0]
+        ) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty & 1) {
+            if (dirty & /*layout*/
+            1) {
               transition_in(if_block, 1);
             }
           } else {
@@ -8769,13 +9929,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(0, layout = $$props2.layout);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
+      if ($$self.$$.dirty & /*layout*/
+      1) {
         $$invalidate(9, leftSb = Utils.getScalesBySide(0, layout));
       }
-      if ($$self.$$.dirty & 1) {
+      if ($$self.$$.dirty & /*layout*/
+      1) {
         $$invalidate(8, rightSb = Utils.getScalesBySide(1, layout));
       }
-      if ($$self.$$.dirty & 7) {
+      if ($$self.$$.dirty & /*props, layout, id*/
+      7) {
         $$invalidate(7, style = `
     width: ${props.width}px;
     height: ${(layout || {}).height}px;
@@ -8942,18 +10105,39 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       c() {
         div = element("div");
         canvas_1 = element("canvas");
-        attr(canvas_1, "id", ctx[2]);
+        attr(
+          canvas_1,
+          "id",
+          /*canvasId*/
+          ctx[2]
+        );
         attr(div, "class", "nvjs-botbar svelte-8gplax");
-        attr(div, "id", ctx[1]);
-        attr(div, "style", ctx[0]);
+        attr(
+          div,
+          "id",
+          /*bbId*/
+          ctx[1]
+        );
+        attr(
+          div,
+          "style",
+          /*bbStyle*/
+          ctx[0]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, canvas_1);
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1) {
-          attr(div, "style", ctx2[0]);
+        if (dirty & /*bbStyle*/
+        1) {
+          attr(
+            div,
+            "style",
+            /*bbStyle*/
+            ctx2[0]
+          );
         }
       },
       i: noop,
@@ -9010,17 +10194,20 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(3, layout = $$props2.layout);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 24) {
+      if ($$self.$$.dirty & /*props, layout*/
+      24) {
         $$invalidate(0, bbStyle = `
     background: ${props.colors.back};
     width: ${(layout.botbar || {}).width}px;
     height: ${(layout.botbar || {}).height}px;
 `);
       }
-      if ($$self.$$.dirty & 8) {
+      if ($$self.$$.dirty & /*layout*/
+      8) {
         $$invalidate(5, width = (layout.botbar || {}).width);
       }
-      if ($$self.$$.dirty & 32) {
+      if ($$self.$$.dirty & /*width*/
+      32) {
         resizeWatch();
       }
     };
@@ -9038,17 +10225,28 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     return {
       c() {
         div = element("div");
-        t = text("No data \xAF\\_( \xB0\uFE4F\xB0)_/\xAF");
+        t = text("No data ¯\\_( °﹏°)_/¯");
         attr(div, "class", "nvjs-no-data-stub svelte-172ri4o");
-        attr(div, "style", ctx[0]);
+        attr(
+          div,
+          "style",
+          /*style*/
+          ctx[0]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, t);
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1) {
-          attr(div, "style", ctx2[0]);
+        if (dirty & /*style*/
+        1) {
+          attr(
+            div,
+            "style",
+            /*style*/
+            ctx2[0]
+          );
         }
       },
       i: noop,
@@ -9067,7 +10265,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(1, props = $$props2.props);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 2) {
+      if ($$self.$$.dirty & /*props*/
+      2) {
         $$invalidate(0, style = `
     display: flex;
     width: ${props.width}px;
@@ -9100,7 +10299,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   function create_else_block(ctx) {
     let nodatastub;
     let current;
-    nodatastub = new NoDataStub({ props: { props: ctx[0] } });
+    nodatastub = new NoDataStub({ props: { props: (
+      /*props*/
+      ctx[0]
+    ) } });
     return {
       c() {
         create_component(nodatastub.$$.fragment);
@@ -9111,8 +10313,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const nodatastub_changes = {};
-        if (dirty & 1)
-          nodatastub_changes.props = ctx2[0];
+        if (dirty & /*props*/
+        1)
+          nodatastub_changes.props = /*props*/
+          ctx2[0];
         nodatastub.$set(nodatastub_changes);
       },
       i(local) {
@@ -9134,7 +10338,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let t;
     let botbar;
     let current;
-    let each_value = ctx[3].panes();
+    let each_value = (
+      /*hub*/
+      ctx[3].panes()
+    );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
@@ -9144,8 +10351,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     });
     botbar = new Botbar({
       props: {
-        props: ctx[2],
-        layout: ctx[1]
+        props: (
+          /*chartProps*/
+          ctx[2]
+        ),
+        layout: (
+          /*layout*/
+          ctx[1]
+        )
       }
     });
     return {
@@ -9167,8 +10380,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         current = true;
       },
       p(ctx2, dirty) {
-        if (dirty & 14) {
-          each_value = ctx2[3].panes();
+        if (dirty & /*layout, chartProps, hub*/
+        14) {
+          each_value = /*hub*/
+          ctx2[3].panes();
           let i;
           for (i = 0; i < each_value.length; i += 1) {
             const child_ctx = get_each_context(ctx2, each_value, i);
@@ -9189,10 +10404,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           check_outros();
         }
         const botbar_changes = {};
-        if (dirty & 4)
-          botbar_changes.props = ctx2[2];
-        if (dirty & 2)
-          botbar_changes.layout = ctx2[1];
+        if (dirty & /*chartProps*/
+        4)
+          botbar_changes.props = /*chartProps*/
+          ctx2[2];
+        if (dirty & /*layout*/
+        2)
+          botbar_changes.layout = /*layout*/
+          ctx2[1];
         botbar.$set(botbar_changes);
       },
       i(local) {
@@ -9225,10 +10444,26 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let current;
     pane = new Pane({
       props: {
-        id: ctx[27],
-        layout: ctx[1].grids[ctx[27]],
-        props: ctx[2],
-        main: ctx[25] === ctx[3].chart
+        id: (
+          /*i*/
+          ctx[27]
+        ),
+        layout: (
+          /*layout*/
+          ctx[1].grids[
+            /*i*/
+            ctx[27]
+          ]
+        ),
+        props: (
+          /*chartProps*/
+          ctx[2]
+        ),
+        main: (
+          /*pane*/
+          ctx[25] === /*hub*/
+          ctx[3].chart
+        )
       }
     });
     return {
@@ -9241,10 +10476,17 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, dirty) {
         const pane_changes = {};
-        if (dirty & 2)
-          pane_changes.layout = ctx2[1].grids[ctx2[27]];
-        if (dirty & 4)
-          pane_changes.props = ctx2[2];
+        if (dirty & /*layout*/
+        2)
+          pane_changes.layout = /*layout*/
+          ctx2[1].grids[
+            /*i*/
+            ctx2[27]
+          ];
+        if (dirty & /*chartProps*/
+        4)
+          pane_changes.props = /*chartProps*/
+          ctx2[2];
         pane.$set(pane_changes);
       },
       i(local) {
@@ -9270,7 +10512,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     const if_block_creators = [create_if_block, create_else_block];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
-      if (ctx2[1] && ctx2[1].main)
+      if (
+        /*layout*/
+        ctx2[1] && /*layout*/
+        ctx2[1].main
+      )
         return 0;
       return 1;
     }
@@ -9360,7 +10606,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let interval = scan.detectInterval();
     let timeFrame = scan.getTimeframe();
     let range = scan.defaultRange();
-    let cursor = new Cursor();
+    let cursor = new Cursor(meta);
     let storage = {};
     let ctx = new Context(props);
     let layout = null;
@@ -9459,7 +10705,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(0, props = $$props2.props);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 7681) {
+      if ($$self.$$.dirty & /*interval, timeFrame, range, cursor, props*/
+      7681) {
         $$invalidate(2, chartProps = Object.assign({ interval, timeFrame, range, ctx, cursor }, props));
       }
     };
@@ -9514,7 +10761,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     let div;
     let chart_1;
     let current;
-    let chart_1_props = { props: ctx[1] };
+    let chart_1_props = { props: (
+      /*props*/
+      ctx[1]
+    ) };
     chart_1 = new Chart({ props: chart_1_props });
     ctx[19](chart_1);
     return {
@@ -9522,8 +10772,18 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         div = element("div");
         create_component(chart_1.$$.fragment);
         attr(div, "class", "night-vision svelte-7z7hqo");
-        attr(div, "id", ctx[0]);
-        attr(div, "style", ctx[3]);
+        attr(
+          div,
+          "id",
+          /*id*/
+          ctx[0]
+        );
+        attr(
+          div,
+          "style",
+          /*style*/
+          ctx[3]
+        );
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -9532,14 +10792,28 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       },
       p(ctx2, [dirty]) {
         const chart_1_changes = {};
-        if (dirty & 2)
-          chart_1_changes.props = ctx2[1];
+        if (dirty & /*props*/
+        2)
+          chart_1_changes.props = /*props*/
+          ctx2[1];
         chart_1.$set(chart_1_changes);
-        if (!current || dirty & 1) {
-          attr(div, "id", ctx2[0]);
+        if (!current || dirty & /*id*/
+        1) {
+          attr(
+            div,
+            "id",
+            /*id*/
+            ctx2[0]
+          );
         }
-        if (!current || dirty & 8) {
-          attr(div, "style", ctx2[3]);
+        if (!current || dirty & /*style*/
+        8) {
+          attr(
+            div,
+            "style",
+            /*style*/
+            ctx2[3]
+          );
         }
       },
       i(local) {
@@ -9615,28 +10889,39 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         $$invalidate(15, autoResize = $$props2.autoResize);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 2048) {
+      if ($$self.$$.dirty & /*config*/
+      2048) {
         $$invalidate(16, configMerge = Object.assign(Const.ChartConfig, config));
       }
-      if ($$self.$$.dirty & 2560) {
+      if ($$self.$$.dirty & /*toolbar, config*/
+      2560) {
         $$invalidate(18, offset = toolbar ? config.TOOLBAR : 0);
       }
-      if ($$self.$$.dirty & 256) {
+      if ($$self.$$.dirty & /*colors*/
+      256) {
         $$invalidate(17, colorsUser = Object.assign(Const.COLORS, colors));
       }
-      if ($$self.$$.dirty & 468193) {
+      if ($$self.$$.dirty & /*showLogo, id, width, offset, height, colorsUser, scripts, configMerge, timezone*/
+      468193) {
         $$invalidate(1, props = {
           showLogo,
           id,
           width: width - offset,
           height,
           colors: colorsUser,
+          //toolbar,
           scripts,
           config: configMerge,
+          //legendButtons,
+          //indexBased,
+          //extensions,
+          //xSettings,
+          //skin,
           timezone
         });
       }
-      if ($$self.$$.dirty & 2) {
+      if ($$self.$$.dirty & /*props*/
+      2) {
         $$invalidate(3, style = `
     width: ${props.width}px;
     height: ${props.height}px;
@@ -9666,7 +10951,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       chart_1_binding
     ];
   }
-  class NightVision$1 extends SvelteComponent {
+  let NightVision$1 = class NightVision extends SvelteComponent {
     constructor(options) {
       super();
       init(
@@ -9780,7 +11065,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.$$set({ autoResize });
       flush();
     }
-  }
+  };
   function resizeTracker(chart) {
     const resizeObserver = new ResizeObserver((entries) => {
       let rect = chart.root.getBoundingClientRect();
@@ -9813,12 +11098,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
       this.se.setRefs(this.hub, this.scan);
     }
+    // *** PROPS ***
+    // (see the default values in NightVision.svelte)
+    // Chart container id (should be unique)
     get id() {
       return this.comp.id;
     }
     set id(val) {
       this.comp.$set({ id: val });
     }
+    // Width of the chart
     get width() {
       return this.comp.width;
     }
@@ -9826,6 +11115,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.comp.$set({ width: val });
       setTimeout(() => this.update());
     }
+    // Height of the chart
     get height() {
       return this.comp.height;
     }
@@ -9833,18 +11123,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.comp.$set({ height: val });
       setTimeout(() => this.update());
     }
+    // Colors (modify specific colors)
+    // TODO: not reactive enough
     get colors() {
       return this.comp.colors;
     }
     set colors(val) {
       this.comp.$set({ colors: val });
     }
+    // Show NV logo or not
     get showLogo() {
       return this.comp.showLogo;
     }
     set showLogo(val) {
       this.comp.$set({ id: val });
     }
+    // User-defined scripts (overlays & indicators)
     get scripts() {
       return this._scripts;
     }
@@ -9853,6 +11147,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.scriptHub.init(this._scripts);
       this.update("full");
     }
+    // The data (auto-updated on reset)
     get data() {
       return this._data;
     }
@@ -9860,18 +11155,21 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this._data = val;
       this.update("full");
     }
+    // Overwrites the default config values
     get config() {
       return this.comp.config;
     }
     set config(val) {
       this.comp.$set({ config: val });
     }
+    // Index-based mode of rendering
     get indexBased() {
       return this.comp.indexBased;
     }
     set indexBased(val) {
       this.comp.$set({ indexBased: val });
     }
+    // Timezone (Shift from UTC, hours)
     get timezone() {
       return this.comp.timezone;
     }
@@ -9879,6 +11177,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.comp.$set({ timezone: val });
       setTimeout(() => this.update());
     }
+    // *** Internal variables ***
     get layout() {
       let chart = this.comp.getChart();
       if (!chart)
@@ -9909,6 +11208,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         return;
       chart.setCursor(val);
     }
+    // *** METHODS ***
+    // Various updates of the chart
     update(type = "layout", opt = {}) {
       var [type, id] = type.split("-");
       const ev = this.events;
@@ -9943,14 +11244,18 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           break;
       }
     }
+    // Reset everything
     fullReset() {
       this.update("full", { resetRange: true });
     }
+    // Go to time/index
     goto(ti) {
       let range = this.range;
       let dti = range[1] - range[0];
       this.range = [ti - dti, ti];
     }
+    // Scroll on interval forward
+    // TODO: keep legend updated, when the cursor is outside
     scroll() {
       if (this.cursor.locked)
         return;
@@ -9987,6 +11292,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         return this;
       };
       Hamster.Instance.prototype = {
+        /**
+         * bind events to the instance
+         * @param   {Function}    handler
+         * @param   {Boolean}     useCapture
+         * @returns {Hamster.Instance}
+         */
         wheel: function onEvent(handler, useCapture) {
           Hamster.event.add(this, Hamster.SUPPORT, handler, useCapture);
           if (Hamster.SUPPORT === "DOMMouseScroll") {
@@ -9994,6 +11305,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return this;
         },
+        /**
+         * unbind events to the instance
+         * @param   {Function}    handler
+         * @param   {Boolean}     useCapture
+         * @returns {Hamster.Instance}
+         */
         unwheel: function offEvent(handler, useCapture) {
           if (handler === void 0 && (handler = this.handlers.slice(-1)[0])) {
             handler = handler.original;
@@ -10006,6 +11323,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         }
       };
       Hamster.event = {
+        /**
+         * cross-browser 'addWheelListener'
+         * @param   {Instance}    hamster
+         * @param   {String}      eventName
+         * @param   {Function}    handler
+         * @param   {Boolean}     useCapture
+         */
         add: function add(hamster2, eventName, handler, useCapture) {
           var originalHandler = handler;
           handler = function(originalEvent) {
@@ -10021,6 +11345,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             normalised: handler
           });
         },
+        /**
+         * removeWheelListener
+         * @param   {Instance}    hamster
+         * @param   {String}      eventName
+         * @param   {Function}    handler
+         * @param   {Boolean}     useCapture
+         */
         remove: function remove(hamster2, eventName, handler, useCapture) {
           var originalHandler = handler, lookup = {}, handlers;
           for (var i = 0, len = hamster2.handlers.length; i < len; ++i) {
@@ -10039,9 +11370,15 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       };
       var lowestDelta, lowestDeltaXY;
       Hamster.normalise = {
+        /**
+         * fix browser inconsistencies
+         */
         browser: function normaliseBrowser() {
           if (!("onwheel" in document2 || document2.documentMode >= 9)) {
-            Hamster.SUPPORT = document2.onmousewheel !== void 0 ? "mousewheel" : "DOMMouseScroll";
+            Hamster.SUPPORT = document2.onmousewheel !== void 0 ? "mousewheel" : (
+              // webkit and IE < 9 support at least "mousewheel"
+              "DOMMouseScroll"
+            );
           }
           if (!window2.addEventListener) {
             Hamster.ADD_EVENT = "attachEvent";
@@ -10049,8 +11386,14 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             Hamster.PREFIX = "on";
           }
         },
+        /**
+         * create a normalised event object
+         * @param   {Function}    originalEvent
+         * @returns {Object}      event
+         */
         event: function normaliseEvent(originalEvent) {
           var event = {
+            // keep a reference to the original event object
             originalEvent,
             target: originalEvent.target || originalEvent.srcElement,
             type: "wheel",
@@ -10083,6 +11426,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return event;
         },
+        /**
+         * normalise 'deltas' of the mouse wheel
+         * @param   {Function}    originalEvent
+         * @returns {Array}       deltas
+         */
         delta: function normaliseDelta(originalEvent) {
           var delta = 0, deltaX = 0, deltaY = 0, absDelta = 0, absDeltaXY = 0, fn;
           if (originalEvent.deltaY) {
@@ -10132,11 +11480,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     })(window, window.document);
   })(hamster$2);
-  const hamster = hamster$2.exports;
+  var hamsterExports = hamster$2.exports;
+  const hamster = /* @__PURE__ */ getDefaultExportFromCjs(hamsterExports);
   const hamster$1 = /* @__PURE__ */ _mergeNamespaces({
     __proto__: null,
     default: hamster
-  }, [hamster$2.exports]);
+  }, [hamsterExports]);
   var hammer$2 = { exports: {} };
   /*! Hammer.JS - v2.0.7 - 2016-04-22
    * http://hammerjs.github.io/
@@ -10375,13 +11724,23 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.init();
       }
       Input2.prototype = {
+        /**
+         * should handle the inputEvent data and trigger the callback
+         * @virtual
+         */
         handler: function() {
         },
+        /**
+         * bind the events
+         */
         init: function() {
           this.evEl && addEventListeners(this.element, this.evEl, this.domHandler);
           this.evTarget && addEventListeners(this.target, this.evTarget, this.domHandler);
           this.evWin && addEventListeners(getWindowForElement(this.element), this.evWin, this.domHandler);
         },
+        /**
+         * unbind the events
+         */
         destroy: function() {
           this.evEl && removeEventListeners(this.element, this.evEl, this.domHandler);
           this.evTarget && removeEventListeners(this.target, this.evTarget, this.domHandler);
@@ -10582,6 +11941,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         Input2.apply(this, arguments);
       }
       inherit(MouseInput, Input2, {
+        /**
+         * handle mouse events
+         * @param {Object} ev
+         */
         handler: function MEhandler(ev) {
           var eventType = MOUSE_INPUT_MAP[ev.type];
           if (eventType & INPUT_START && ev.button === 0) {
@@ -10616,6 +11979,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         3: INPUT_TYPE_PEN,
         4: INPUT_TYPE_MOUSE,
         5: INPUT_TYPE_KINECT
+        // see https://twitter.com/jacobrossi/status/480596438489890816
       };
       var POINTER_ELEMENT_EVENTS = "pointerdown";
       var POINTER_WINDOW_EVENTS = "pointermove pointerup pointercancel";
@@ -10630,6 +11994,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.store = this.manager.session.pointerEvents = [];
       }
       inherit(PointerEventInput, Input2, {
+        /**
+         * handle mouse events
+         * @param {Object} ev
+         */
         handler: function PEhandler(ev) {
           var store = this.store;
           var removePointer = false;
@@ -10763,6 +12131,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           return;
         }
         return [
+          // merge targetTouches with changedTargetTouches so it contains ALL touches, including 'end' and 'cancel'
           uniqueArray(targetTouches.concat(changedTargetTouches), "identifier", true),
           changedTargetTouches
         ];
@@ -10778,6 +12147,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.lastTouches = [];
       }
       inherit(TouchMouseInput, Input2, {
+        /**
+         * handle mouse and touch events
+         * @param {Hammer} manager
+         * @param {String} inputEvent
+         * @param {Object} inputData
+         */
         handler: function TMEhandler(manager, inputEvent, inputData) {
           var isTouch = inputData.pointerType == INPUT_TYPE_TOUCH, isMouse = inputData.pointerType == INPUT_TYPE_MOUSE;
           if (isMouse && inputData.sourceCapabilities && inputData.sourceCapabilities.firesTouchEvents) {
@@ -10790,6 +12165,9 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           this.callback(manager, inputEvent, inputData);
         },
+        /**
+         * remove the event listeners
+         */
         destroy: function destroy() {
           this.touch.destroy();
           this.mouse.destroy();
@@ -10843,6 +12221,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.set(value);
       }
       TouchAction.prototype = {
+        /**
+         * set the touchAction value on the element or enable the polyfill
+         * @param {String} value
+         */
         set: function(value) {
           if (value == TOUCH_ACTION_COMPUTE) {
             value = this.compute();
@@ -10852,9 +12234,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           this.actions = value.toLowerCase().trim();
         },
+        /**
+         * just re-set the touchAction value
+         */
         update: function() {
           this.set(this.manager.options.touchAction);
         },
+        /**
+         * compute the value for the touchAction property based on the recognizer's settings
+         * @returns {String} value
+         */
         compute: function() {
           var actions = [];
           each(this.manager.recognizers, function(recognizer) {
@@ -10864,6 +12253,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           });
           return cleanTouchActions(actions.join(" "));
         },
+        /**
+         * this method is called on each input cycle and provides the preventing of the browser behavior
+         * @param {Object} input
+         */
         preventDefaults: function(input) {
           var srcEvent = input.srcEvent;
           var direction = input.offsetDirection;
@@ -10890,6 +12283,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             return this.preventSrc(srcEvent);
           }
         },
+        /**
+         * call preventDefault to prevent the browser's default behavior (scrolling in most cases)
+         * @param {Object} srcEvent
+         */
         preventSrc: function(srcEvent) {
           this.manager.session.prevented = true;
           srcEvent.preventDefault();
@@ -10940,12 +12337,26 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.requireFail = [];
       }
       Recognizer.prototype = {
+        /**
+         * @virtual
+         * @type {Object}
+         */
         defaults: {},
+        /**
+         * set options
+         * @param {Object} options
+         * @return {Recognizer}
+         */
         set: function(options) {
           assign(this.options, options);
           this.manager && this.manager.touchAction.update();
           return this;
         },
+        /**
+         * recognize simultaneous with an other recognizer.
+         * @param {Recognizer} otherRecognizer
+         * @returns {Recognizer} this
+         */
         recognizeWith: function(otherRecognizer) {
           if (invokeArrayArg(otherRecognizer, "recognizeWith", this)) {
             return this;
@@ -10958,6 +12369,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return this;
         },
+        /**
+         * drop the simultaneous link. it doesnt remove the link on the other recognizer.
+         * @param {Recognizer} otherRecognizer
+         * @returns {Recognizer} this
+         */
         dropRecognizeWith: function(otherRecognizer) {
           if (invokeArrayArg(otherRecognizer, "dropRecognizeWith", this)) {
             return this;
@@ -10966,6 +12382,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           delete this.simultaneous[otherRecognizer.id];
           return this;
         },
+        /**
+         * recognizer can only run when an other is failing
+         * @param {Recognizer} otherRecognizer
+         * @returns {Recognizer} this
+         */
         requireFailure: function(otherRecognizer) {
           if (invokeArrayArg(otherRecognizer, "requireFailure", this)) {
             return this;
@@ -10978,6 +12399,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return this;
         },
+        /**
+         * drop the requireFailure link. it does not remove the link on the other recognizer.
+         * @param {Recognizer} otherRecognizer
+         * @returns {Recognizer} this
+         */
         dropRequireFailure: function(otherRecognizer) {
           if (invokeArrayArg(otherRecognizer, "dropRequireFailure", this)) {
             return this;
@@ -10989,12 +12415,26 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return this;
         },
+        /**
+         * has require failures boolean
+         * @returns {boolean}
+         */
         hasRequireFailures: function() {
           return this.requireFail.length > 0;
         },
+        /**
+         * if the recognizer can recognize simultaneous with an other recognizer
+         * @param {Recognizer} otherRecognizer
+         * @returns {Boolean}
+         */
         canRecognizeWith: function(otherRecognizer) {
           return !!this.simultaneous[otherRecognizer.id];
         },
+        /**
+         * You should use `tryEmit` instead of `emit` directly to check
+         * that all the needed recognizers has failed before emitting.
+         * @param {Object} input
+         */
         emit: function(input) {
           var self2 = this;
           var state = this.state;
@@ -11012,12 +12452,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             emit(self2.options.event + stateStr(state));
           }
         },
+        /**
+         * Check that all the require failure recognizers has failed,
+         * if true, it emits a gesture event,
+         * otherwise, setup the state to FAILED.
+         * @param {Object} input
+         */
         tryEmit: function(input) {
           if (this.canEmit()) {
             return this.emit(input);
           }
           this.state = STATE_FAILED;
         },
+        /**
+         * can we emit?
+         * @returns {boolean}
+         */
         canEmit: function() {
           var i = 0;
           while (i < this.requireFail.length) {
@@ -11028,6 +12478,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return true;
         },
+        /**
+         * update the recognizer
+         * @param {Object} inputData
+         */
         recognize: function(inputData) {
           var inputDataClone = assign({}, inputData);
           if (!boolOrFn(this.options.enable, [this, inputDataClone])) {
@@ -11043,10 +12497,28 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             this.tryEmit(inputDataClone);
           }
         },
+        /**
+         * return the state of the recognizer
+         * the actual recognizing happens in this method
+         * @virtual
+         * @param {Object} inputData
+         * @returns {Const} STATE
+         */
         process: function(inputData) {
         },
+        // jshint ignore:line
+        /**
+         * return the preferred touch-action
+         * @virtual
+         * @returns {Array}
+         */
         getTouchAction: function() {
         },
+        /**
+         * called when the gesture isn't allowed to recognize
+         * like when another is being recognized or it is disabled
+         * @virtual
+         */
         reset: function() {
         }
       };
@@ -11085,13 +12557,33 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         Recognizer.apply(this, arguments);
       }
       inherit(AttrRecognizer, Recognizer, {
+        /**
+         * @namespace
+         * @memberof AttrRecognizer
+         */
         defaults: {
+          /**
+           * @type {Number}
+           * @default 1
+           */
           pointers: 1
         },
+        /**
+         * Used to check if it the recognizer receives valid input, like input.distance > 10.
+         * @memberof AttrRecognizer
+         * @param {Object} input
+         * @returns {Boolean} recognized
+         */
         attrTest: function(input) {
           var optionPointers = this.options.pointers;
           return optionPointers === 0 || input.pointers.length === optionPointers;
         },
+        /**
+         * Process the input and return the state for the recognizer
+         * @memberof AttrRecognizer
+         * @param {Object} input
+         * @returns {*} State
+         */
         process: function(input) {
           var state = this.state;
           var eventType = input.eventType;
@@ -11116,6 +12608,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.pY = null;
       }
       inherit(PanRecognizer, AttrRecognizer, {
+        /**
+         * @namespace
+         * @memberof PanRecognizer
+         */
         defaults: {
           event: "pan",
           threshold: 10,
@@ -11171,6 +12667,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         AttrRecognizer.apply(this, arguments);
       }
       inherit(PinchRecognizer, AttrRecognizer, {
+        /**
+         * @namespace
+         * @memberof PinchRecognizer
+         */
         defaults: {
           event: "pinch",
           threshold: 0,
@@ -11196,11 +12696,17 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this._input = null;
       }
       inherit(PressRecognizer, Recognizer, {
+        /**
+         * @namespace
+         * @memberof PressRecognizer
+         */
         defaults: {
           event: "press",
           pointers: 1,
           time: 251,
+          // minimal time of the pointer to be pressed
           threshold: 9
+          // a minimal movement is ok, but keep it low
         },
         getTouchAction: function() {
           return [TOUCH_ACTION_AUTO];
@@ -11243,6 +12749,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         AttrRecognizer.apply(this, arguments);
       }
       inherit(RotateRecognizer, AttrRecognizer, {
+        /**
+         * @namespace
+         * @memberof RotateRecognizer
+         */
         defaults: {
           event: "rotate",
           threshold: 0,
@@ -11259,6 +12769,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         AttrRecognizer.apply(this, arguments);
       }
       inherit(SwipeRecognizer, AttrRecognizer, {
+        /**
+         * @namespace
+         * @memberof SwipeRecognizer
+         */
         defaults: {
           event: "swipe",
           threshold: 10,
@@ -11298,14 +12812,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.count = 0;
       }
       inherit(TapRecognizer, Recognizer, {
+        /**
+         * @namespace
+         * @memberof PinchRecognizer
+         */
         defaults: {
           event: "tap",
           pointers: 1,
           taps: 1,
           interval: 300,
+          // max time between the multi-tap taps
           time: 250,
+          // max time of the pointer to be down (like finger on the screen)
           threshold: 9,
+          // a minimal movement is ok, but keep it low
           posThreshold: 10
+          // a multi-tap can be a bit off the initial position
         },
         getTouchAction: function() {
           return [TOUCH_ACTION_MANIPULATION];
@@ -11371,12 +12893,46 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
       Hammer.VERSION = "2.0.7";
       Hammer.defaults = {
+        /**
+         * set if DOM events are being triggered.
+         * But this is slower and unused by simple implementations, so disabled by default.
+         * @type {Boolean}
+         * @default false
+         */
         domEvents: false,
+        /**
+         * The value for the touchAction property/fallback.
+         * When set to `compute` it will magically set the correct value based on the added recognizers.
+         * @type {String}
+         * @default compute
+         */
         touchAction: TOUCH_ACTION_COMPUTE,
+        /**
+         * @type {Boolean}
+         * @default true
+         */
         enable: true,
+        /**
+         * EXPERIMENTAL FEATURE -- can be removed/changed
+         * Change the parent input target element.
+         * If Null, then it is being set the to main element.
+         * @type {Null|EventTarget}
+         * @default null
+         */
         inputTarget: null,
+        /**
+         * force an input class
+         * @type {Null|Function}
+         * @default null
+         */
         inputClass: null,
+        /**
+         * Default recognizer setup when calling `Hammer()`
+         * When creating a new Manager these will be skipped.
+         * @type {Array}
+         */
         preset: [
+          // RecognizerClass, options, [recognizeWith, ...], [requireFailure, ...]
           [RotateRecognizer, { enable: false }],
           [PinchRecognizer, { enable: false }, ["rotate"]],
           [SwipeRecognizer, { direction: DIRECTION_HORIZONTAL }],
@@ -11385,12 +12941,50 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           [TapRecognizer, { event: "doubletap", taps: 2 }, ["tap"]],
           [PressRecognizer]
         ],
+        /**
+         * Some CSS properties can be used to improve the working of Hammer.
+         * Add them to this method and they will be set when creating a new Manager.
+         * @namespace
+         */
         cssProps: {
+          /**
+           * Disables text selection to improve the dragging gesture. Mainly for desktop browsers.
+           * @type {String}
+           * @default 'none'
+           */
           userSelect: "none",
+          /**
+           * Disable the Windows Phone grippers when pressing an element.
+           * @type {String}
+           * @default 'none'
+           */
           touchSelect: "none",
+          /**
+           * Disables the default callout shown when you touch and hold a touch target.
+           * On iOS, when you touch and hold a touch target such as a link, Safari displays
+           * a callout containing information about the link. This property allows you to disable that callout.
+           * @type {String}
+           * @default 'none'
+           */
           touchCallout: "none",
+          /**
+           * Specifies whether zooming is enabled. Used by IE10>
+           * @type {String}
+           * @default 'none'
+           */
           contentZooming: "none",
+          /**
+           * Specifies that an entire element should be draggable instead of its contents. Mainly for desktop browsers.
+           * @type {String}
+           * @default 'none'
+           */
           userDrag: "none",
+          /**
+           * Overrides the highlight color shown when the user taps a link or a JavaScript
+           * clickable element in iOS. This property obeys the alpha value, if specified.
+           * @type {String}
+           * @default 'rgba(0,0,0,0)'
+           */
           tapHighlightColor: "rgba(0,0,0,0)"
         }
       };
@@ -11414,6 +13008,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         }, this);
       }
       Manager.prototype = {
+        /**
+         * set options
+         * @param {Object} options
+         * @returns {Manager}
+         */
         set: function(options) {
           assign(this.options, options);
           if (options.touchAction) {
@@ -11426,9 +13025,21 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return this;
         },
+        /**
+         * stop recognizing for this session.
+         * This session will be discarded, when a new [input]start event is fired.
+         * When forced, the recognizer cycle is stopped immediately.
+         * @param {Boolean} [force]
+         */
         stop: function(force) {
           this.session.stopped = force ? FORCED_STOP : STOP;
         },
+        /**
+         * run the recognizers!
+         * called by the inputHandler function on every movement of the pointers (touches)
+         * it walks through all the recognizers and tries to detect the gesture that is being made
+         * @param {Object} inputData
+         */
         recognize: function(inputData) {
           var session = this.session;
           if (session.stopped) {
@@ -11444,7 +13055,9 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           var i = 0;
           while (i < recognizers.length) {
             recognizer = recognizers[i];
-            if (session.stopped !== FORCED_STOP && (!curRecognizer || recognizer == curRecognizer || recognizer.canRecognizeWith(curRecognizer))) {
+            if (session.stopped !== FORCED_STOP && // 1
+            (!curRecognizer || recognizer == curRecognizer || // 2
+            recognizer.canRecognizeWith(curRecognizer))) {
               recognizer.recognize(inputData);
             } else {
               recognizer.reset();
@@ -11455,6 +13068,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             i++;
           }
         },
+        /**
+         * get a recognizer by its event name.
+         * @param {Recognizer|String} recognizer
+         * @returns {Recognizer|Null}
+         */
         get: function(recognizer) {
           if (recognizer instanceof Recognizer) {
             return recognizer;
@@ -11467,6 +13085,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return null;
         },
+        /**
+         * add a recognizer to the manager
+         * existing recognizers with the same event name will be removed
+         * @param {Recognizer} recognizer
+         * @returns {Recognizer|Manager}
+         */
         add: function(recognizer) {
           if (invokeArrayArg(recognizer, "add", this)) {
             return this;
@@ -11480,6 +13104,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           this.touchAction.update();
           return recognizer;
         },
+        /**
+         * remove a recognizer by name or instance
+         * @param {Recognizer|String} recognizer
+         * @returns {Manager}
+         */
         remove: function(recognizer) {
           if (invokeArrayArg(recognizer, "remove", this)) {
             return this;
@@ -11495,6 +13124,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           }
           return this;
         },
+        /**
+         * bind event
+         * @param {String} events
+         * @param {Function} handler
+         * @returns {EventEmitter} this
+         */
         on: function(events, handler) {
           if (events === undefined$1) {
             return;
@@ -11509,6 +13144,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           });
           return this;
         },
+        /**
+         * unbind event, leave emit blank to remove all handlers
+         * @param {String} events
+         * @param {Function} [handler]
+         * @returns {EventEmitter} this
+         */
         off: function(events, handler) {
           if (events === undefined$1) {
             return;
@@ -11523,6 +13164,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           });
           return this;
         },
+        /**
+         * emit event to the listeners
+         * @param {String} event
+         * @param {Object} data
+         */
         emit: function(event, data2) {
           if (this.options.domEvents) {
             triggerDomEvent(event, data2);
@@ -11541,6 +13187,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             i++;
           }
         },
+        /**
+         * destroy the manager and unbinds all events
+         * it doesn't unbind dom events, that is the user own responsibility
+         */
         destroy: function() {
           this.element && toggleCssProps(this, false);
           this.handlers = {};
@@ -11633,11 +13283,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     })(window, document, "Hammer");
   })(hammer$2);
-  const hammer = hammer$2.exports;
+  var hammerExports = hammer$2.exports;
+  const hammer = /* @__PURE__ */ getDefaultExportFromCjs(hammerExports);
   const hammer$1 = /* @__PURE__ */ _mergeNamespaces({
     __proto__: null,
     default: hammer
-  }, [hammer$2.exports]);
+  }, [hammerExports]);
   exports2.Const = Const;
   exports2.DataHub = DataHub$1;
   exports2.DataScan = DataScan;
@@ -11646,5 +13297,5 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
   exports2.NightVision = NightVision;
   exports2.Scripts = Scripts$1;
   exports2.Utils = Utils;
-  Object.defineProperties(exports2, { __esModule: { value: true }, [Symbol.toStringTag]: { value: "Module" } });
+  Object.defineProperty(exports2, Symbol.toStringTag, { value: "Module" });
 });
