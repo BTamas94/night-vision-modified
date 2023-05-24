@@ -2430,7 +2430,7 @@
     function calc$Range() {
       var hi = -Infinity, lo = Infinity;
       for (var ov of ovs) {
-        if (ov.settings.display === false)
+        if (ov.settings.display === false || ov.settings.dontScale == true)
           continue;
         let yfn = (meta.yRangeFns[gridId] || [])[ov.id];
         let data2 = ov.dataSubset;
