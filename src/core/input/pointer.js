@@ -48,7 +48,7 @@ export default class Input {
     }
 
     mouseEvents(cmd) {
-        ['mousemove', 'mouseout', 'mouseup', 'mousedown', 'click']
+        ['mousemove', 'mouseout', 'mouseup', 'mousedown', 'click', 'press']
         .forEach(e => {
             if (cmd === 'addEventListener') {
                 // Save the handler to remove it later
@@ -72,13 +72,14 @@ export default class Input {
         mc.add(new Hammer.Pinch({ threshold: 0}))
         mc.get('pinch').set({ enable: true })
         
-        if (Utils.isMobile) mc.add(new Hammer.Press())
+        mc.add(new Hammer.Press())
 
         mc.on('tap', event => {
             if (!Utils.isMobile) return
                 
             this.calcOffset()
             this.emitCursorCoord(event, { mode: 'aim' })
+            this.simulateMousedown(event)
             this.simulateClick(event)
             
             if (this.fade) this.fade.stop()
@@ -90,11 +91,13 @@ export default class Input {
             })
         
         mc.on('press', event => {
-            if (!Utils.isMobile) return
-
+            // if (!Utils.isMobile) return
+            
             this.calcOffset()
             this.emitCursorCoord(event, { mode: 'aim' })
             this.simulateMousedown(event)
+            this.events.emit("press", event)
+            console.log("Press event")
             // if (this.fade) this.fade.stop()
 
             this.events.emitSpec(this.rrId, 'update-rr')
@@ -194,7 +197,6 @@ export default class Input {
 
     click(event) {
         if (Utils.isMobile) return
-        console.log("click")
         this.events.emit("click", event)
         this.propagate('click', event)
     }

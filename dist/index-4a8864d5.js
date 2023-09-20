@@ -1,4 +1,4 @@
-/* NightVisionCharts v0.3.2 | License: MIT
+/* NightVisionCharts v0.3.3 | License: MIT
  © 2022 ChartMaster. All rights reserved */
 function noop() {
 }
@@ -4615,6 +4615,7 @@ class ParserOV {
             var keyup = null
             var keydown = null
             var keypress = null
+            var press = null
 
             // Overlay code
             ${code}
@@ -4630,7 +4631,7 @@ class ParserOV {
                 valueTracker, ohlc,
                 mousemove, mouseout, mouseup,
                 mousedown, click, keyup, keydown,
-                keypress,
+                keypress, press,
                 // Generated flags
                 ${flags}
             }
@@ -5377,7 +5378,7 @@ class Input {
     this.mouseEvents("addEventListener");
   }
   mouseEvents(cmd) {
-    ["mousemove", "mouseout", "mouseup", "mousedown", "click"].forEach((e) => {
+    ["mousemove", "mouseout", "mouseup", "mousedown", "click", "press"].forEach((e) => {
       if (cmd === "addEventListener") {
         this["_" + e] = this[e].bind(this);
       }
@@ -5385,8 +5386,8 @@ class Input {
     });
   }
   async listeners() {
-    const Hamster = await import("./hamster-9ed998e2.js").then((n) => n.h);
-    const Hammer = await import("./hammer-5b3f6c3b.js").then((n) => n.h);
+    const Hamster = await import("./hamster-48d9b3e3.js").then((n) => n.h);
+    const Hammer = await import("./hammer-4e33405e.js").then((n) => n.h);
     this.hm = Hamster.default(this.canvas);
     this.hm.wheel((event, delta) => this.mousezoom(-delta * 50, event));
     let mc = this.mc = new Hammer.Manager(this.canvas);
@@ -5395,13 +5396,13 @@ class Input {
     mc.add(new Hammer.Tap());
     mc.add(new Hammer.Pinch({ threshold: 0 }));
     mc.get("pinch").set({ enable: true });
-    if (Utils.isMobile)
-      mc.add(new Hammer.Press());
+    mc.add(new Hammer.Press());
     mc.on("tap", (event) => {
       if (!Utils.isMobile)
         return;
       this.calcOffset();
       this.emitCursorCoord(event, { mode: "aim" });
+      this.simulateMousedown(event);
       this.simulateClick(event);
       if (this.fade)
         this.fade.stop();
@@ -5411,11 +5412,11 @@ class Input {
       this.events.emitSpec(this.rrId, "update-rr");
     });
     mc.on("press", (event) => {
-      if (!Utils.isMobile)
-        return;
       this.calcOffset();
       this.emitCursorCoord(event, { mode: "aim" });
       this.simulateMousedown(event);
+      this.events.emit("press", event);
+      console.log("Press event");
       this.events.emitSpec(this.rrId, "update-rr");
     });
     mc.on("panstart", (event) => {
@@ -5501,7 +5502,6 @@ class Input {
   click(event) {
     if (Utils.isMobile)
       return;
-    console.log("click");
     this.events.emit("click", event);
     this.propagate("click", event);
   }
@@ -7292,7 +7292,7 @@ function instance$9($$self, $$props, $$invalidate) {
       await listeners();
   }
   async function listeners() {
-    const Hammer = await import("./hammer-5b3f6c3b.js").then((n) => n.h);
+    const Hammer = await import("./hammer-4e33405e.js").then((n) => n.h);
     mc = new Hammer.Manager(canvas);
     mc.add(new Hammer.Pan({
       direction: Hammer.DIRECTION_VERTICAL,

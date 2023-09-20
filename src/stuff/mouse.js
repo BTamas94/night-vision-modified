@@ -50,6 +50,9 @@ export default class Mouse {
         if (name === 'mouseup') {
             this.pressed = false
         }
+        if (name === 'press') {
+            this.pressed = true
+        }
     }
 
 }

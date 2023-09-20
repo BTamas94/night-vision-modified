@@ -1,4 +1,4 @@
-/* NightVisionCharts v0.3.2 | License: MIT
+/* NightVisionCharts v0.3.3 | License: MIT
  © 2022 ChartMaster. All rights reserved */
 (function(global, factory) {
   typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.NightVision = {}));
@@ -4638,6 +4638,7 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
             var keyup = null
             var keydown = null
             var keypress = null
+            var press = null
 
             // Overlay code
             ${code}
@@ -4653,7 +4654,7 @@ Splines([adx[0], dp[0], dn[0]], this.specs)
                 valueTracker, ohlc,
                 mousemove, mouseout, mouseup,
                 mousedown, click, keyup, keydown,
-                keypress,
+                keypress, press,
                 // Generated flags
                 ${flags}
             }
@@ -5400,7 +5401,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.mouseEvents("addEventListener");
     }
     mouseEvents(cmd) {
-      ["mousemove", "mouseout", "mouseup", "mousedown", "click"].forEach((e) => {
+      ["mousemove", "mouseout", "mouseup", "mousedown", "click", "press"].forEach((e) => {
         if (cmd === "addEventListener") {
           this["_" + e] = this[e].bind(this);
         }
@@ -5418,13 +5419,13 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       mc.add(new Hammer.Tap());
       mc.add(new Hammer.Pinch({ threshold: 0 }));
       mc.get("pinch").set({ enable: true });
-      if (Utils.isMobile)
-        mc.add(new Hammer.Press());
+      mc.add(new Hammer.Press());
       mc.on("tap", (event) => {
         if (!Utils.isMobile)
           return;
         this.calcOffset();
         this.emitCursorCoord(event, { mode: "aim" });
+        this.simulateMousedown(event);
         this.simulateClick(event);
         if (this.fade)
           this.fade.stop();
@@ -5434,11 +5435,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.events.emitSpec(this.rrId, "update-rr");
       });
       mc.on("press", (event) => {
-        if (!Utils.isMobile)
-          return;
         this.calcOffset();
         this.emitCursorCoord(event, { mode: "aim" });
         this.simulateMousedown(event);
+        this.events.emit("press", event);
+        console.log("Press event");
         this.events.emitSpec(this.rrId, "update-rr");
       });
       mc.on("panstart", (event) => {
@@ -5524,7 +5525,6 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     click(event) {
       if (Utils.isMobile)
         return;
-      console.log("click");
       this.events.emit("click", event);
       this.propagate("click", event);
     }
