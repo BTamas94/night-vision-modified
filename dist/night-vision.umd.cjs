@@ -1,4 +1,4 @@
-/* NightVisionCharts v0.3.3 | License: MIT
+/* NightVisionCharts v0.3.4 | License: MIT
  © 2022 ChartMaster. All rights reserved */
 (function(global, factory) {
   typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.NightVision = {}));
@@ -1565,13 +1565,17 @@
         this.hide();
         return this;
       }
-      let prevT = this.ti;
+      let prevX = this.x;
+      let prevY = this.y;
       Object.assign(this, update2);
+      if (update2.freeze === true)
+        return this;
       let start = layout.main.startx;
       let step = layout.main.pxStep;
       this.yValues(layout);
-      if (this.locked && !this.meta.scrollLock) {
-        this.x = layout.main.time2x(prevT);
+      if ((this.locked || this.freeze) && !this.meta.scrollLock) {
+        this.x = prevX;
+        this.y = prevY;
         return this;
       }
       this.x = Math.round((this.x - start) / step) * step + start;
@@ -5401,7 +5405,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.mouseEvents("addEventListener");
     }
     mouseEvents(cmd) {
-      ["mousemove", "mouseout", "mouseup", "mousedown", "click", "press"].forEach((e) => {
+      ["mousemove", "mouseout", "mouseup", "mousedown", "click"].forEach((e) => {
         if (cmd === "addEventListener") {
           this["_" + e] = this[e].bind(this);
         }
@@ -5425,7 +5429,6 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           return;
         this.calcOffset();
         this.emitCursorCoord(event, { mode: "aim" });
-        this.simulateMousedown(event);
         this.simulateClick(event);
         if (this.fade)
           this.fade.stop();

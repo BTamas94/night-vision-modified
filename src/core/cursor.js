@@ -19,17 +19,23 @@ export default class Cursor {
             return this
         }
 
-        let prevT = this.ti
+        let prevX = this.x
+        let prevY = this.y
 
         Object.assign(this, update) // Merge the update
+
+        if(update.freeze === true)
+            return this
+
         let start = layout.main.startx
         let step = layout.main.pxStep
 
         this.yValues(layout)
 
         // If cursor is locked, we get x-coord from stored time
-        if (this.locked && !this.meta.scrollLock) {
-            this.x = layout.main.time2x(prevT)  // + 1
+        if ((this.locked || this.freeze) && !this.meta.scrollLock) {
+            this.x = prevX
+            this.y = prevY
             return this
         }
 

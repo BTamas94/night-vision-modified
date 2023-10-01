@@ -1,4 +1,4 @@
-/* NightVisionCharts v0.3.3 | License: MIT
+/* NightVisionCharts v0.3.4 | License: MIT
  © 2022 ChartMaster. All rights reserved */
 function noop() {
 }
@@ -1543,12 +1543,14 @@ class Cursor {
       return this;
     }
     let prevT = this.ti;
+    let prevV = this.vi;
     Object.assign(this, update2);
     let start = layout.main.startx;
     let step = layout.main.pxStep;
     this.yValues(layout);
-    if (this.locked && !this.meta.scrollLock) {
+    if (this.freeze && !this.meta.scrollLock) {
       this.x = layout.main.time2x(prevT);
+      this.y = layout.main.value2y(prevV);
       return this;
     }
     this.x = Math.round((this.x - start) / step) * step + start;
@@ -1557,8 +1559,9 @@ class Cursor {
   }
   // Get nearest data values
   xValues(hub, layout, props) {
-    if (!this.locked || this.meta.scrollLock) {
+    if (!this.locked && !this.freeze || this.meta.scrollLock) {
       this.ti = layout.main.x2ti(this.x);
+      this.vi = layout.main.y2value(this.y);
     }
     let values = [];
     let vi;
@@ -5386,8 +5389,8 @@ class Input {
     });
   }
   async listeners() {
-    const Hamster = await import("./hamster-48d9b3e3.js").then((n) => n.h);
-    const Hammer = await import("./hammer-4e33405e.js").then((n) => n.h);
+    const Hamster = await import("./hamster-1d18212f.js").then((n) => n.h);
+    const Hammer = await import("./hammer-93d621cb.js").then((n) => n.h);
     this.hm = Hamster.default(this.canvas);
     this.hm.wheel((event, delta) => this.mousezoom(-delta * 50, event));
     let mc = this.mc = new Hammer.Manager(this.canvas);
@@ -5797,8 +5800,6 @@ class Crosshair extends Layer {
     if (!this.layout)
       return;
     const cursor = this.props.cursor;
-    if (!cursor.visible)
-      return;
     ctx.save();
     ctx.strokeStyle = this.props.colors.cross;
     ctx.beginPath();
@@ -7292,7 +7293,7 @@ function instance$9($$self, $$props, $$invalidate) {
       await listeners();
   }
   async function listeners() {
-    const Hammer = await import("./hammer-4e33405e.js").then((n) => n.h);
+    const Hammer = await import("./hammer-93d621cb.js").then((n) => n.h);
     mc = new Hammer.Manager(canvas);
     mc.add(new Hammer.Pan({
       direction: Hammer.DIRECTION_VERTICAL,

@@ -48,7 +48,7 @@ export default class Input {
     }
 
     mouseEvents(cmd) {
-        ['mousemove', 'mouseout', 'mouseup', 'mousedown', 'click', 'press']
+        ['mousemove', 'mouseout', 'mouseup', 'mousedown', 'click']
         .forEach(e => {
             if (cmd === 'addEventListener') {
                 // Save the handler to remove it later
@@ -79,7 +79,7 @@ export default class Input {
                 
             this.calcOffset()
             this.emitCursorCoord(event, { mode: 'aim' })
-            this.simulateMousedown(event)
+            // this.simulateMousedown(event)
             this.simulateClick(event)
             
             if (this.fade) this.fade.stop()
