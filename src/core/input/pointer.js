@@ -13,6 +13,9 @@ import DataHub from '../dataHub.js'
 import MetaHub from '../metaHub.js'
 import { eventFrom } from 'event-from';
 
+let mDownStart = 0;
+let blockNextClick = false
+
 export default class Input {
 
     async setup(comp) {
@@ -196,12 +199,21 @@ export default class Input {
     gestureend(event) { event.preventDefault() }
 
     click(event) {
+        if(blockNextClick) {
+            blockNextClick = false
+            return
+        }
         event.from = eventFrom(event)
+        if(event.from !== "mouse") return
         this.events.emit("click", event)
         this.propagate('click', event)
     }
 
     simulateClick(event) {
+        if(blockNextClick) {
+            blockNextClick = false
+            return
+        }
         event.from = eventFrom(event)
         if(event.from === "mouse") return
         this.events.emit("click", this.touch2mouse(event))
@@ -210,6 +222,8 @@ export default class Input {
 
     mousemove(event) {
         event.from = eventFrom(event)
+        if(event.from !== "mouse") return
+
         this.events.emit('cursor-changed', {
             visible: true,
             gridId: this.gridId,
@@ -217,8 +231,10 @@ export default class Input {
             y: event.layerY - 1 // Align with the crosshair
         })
         this.calcOffset()
+        this.events.emit("mousemove", event)
         this.propagate('mousemove', event)
     }
+
     simulateMousemove(event) {
         event.from = eventFrom(event)
         if(event.from === "mouse") return
@@ -228,19 +244,28 @@ export default class Input {
 
     mouseout(event) {
         event.from = eventFrom(event)
+        if(event.from !== "mouse") return
         this.events.emit('cursor-changed', { visible: false })
         this.propagate('mouseout', event)
     }
 
     mouseup(event) {
         event.from = eventFrom(event)
+        if(event.from !== "mouse") return
         this.drug = null
-        this.events.emit('cursor-locked', false)
+        if(Date.now() - mDownStart > 750 )
+            blockNextClick = true
+        // this.events.emit('cursor-locked', false)
+        this.events.emit('mouseup', false)
         this.propagate('mouseup', event)
     }
+
     simulateMouseup(event) {
         event.from = eventFrom(event)
         if(event.from === "mouse") return
+        this.drug = null
+
+        // this.events.emit('cursor-locked', false)
         this.events.emit("mouseup", this.touch2mouse(event))
         this.propagate('mouseup', this.touch2mouse(event))
     }
@@ -248,14 +273,18 @@ export default class Input {
 
     mousedown(event) {
         event.from = eventFrom(event)
+        if(event.from !== "mouse") return
+        if(event.defaultPrevented) return
+        // this.events.emit('grid-mousedown', [this.gridId, event])
+        mDownStart = Date.now()
+        this.events.emit("mousedown", event)
         this.propagate('mousedown', event)
-        if (event.defaultPrevented) return
-        this.events.emit('grid-mousedown', [this.gridId, event])
     }
 
     simulateMousedown(event) {
         event.from = eventFrom(event)
         if(event.from === "mouse") return
+        mDownStart = Date.now()
         this.events.emit("mousedown", this.touch2mouse(event))
         this.propagate('mousedown', this.touch2mouse(event))
     }

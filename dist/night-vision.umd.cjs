@@ -1,4 +1,4 @@
-/* NightVisionCharts v0.3.5 | License: MIT
+/* NightVisionCharts v0.3.6 | License: MIT
  © 2022 ChartMaster. All rights reserved */
 (function(global, factory) {
   typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.NightVision = {}));
@@ -5492,6 +5492,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     }
     return recentEventFrom;
   };
+  let mDownStart = 0;
+  let blockNextClick = false;
   class Input {
     async setup(comp) {
       this.MIN_ZOOM = comp.props.config.MIN_ZOOM;
@@ -5643,11 +5645,21 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       event2.preventDefault();
     }
     click(event2) {
+      if (blockNextClick) {
+        blockNextClick = false;
+        return;
+      }
       event2.from = eventFrom(event2);
+      if (event2.from !== "mouse")
+        return;
       this.events.emit("click", event2);
       this.propagate("click", event2);
     }
     simulateClick(event2) {
+      if (blockNextClick) {
+        blockNextClick = false;
+        return;
+      }
       event2.from = eventFrom(event2);
       if (event2.from === "mouse")
         return;
@@ -5656,6 +5668,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     }
     mousemove(event2) {
       event2.from = eventFrom(event2);
+      if (event2.from !== "mouse")
+        return;
       this.events.emit("cursor-changed", {
         visible: true,
         gridId: this.gridId,
@@ -5664,6 +5678,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         // Align with the crosshair
       });
       this.calcOffset();
+      this.events.emit("mousemove", event2);
       this.propagate("mousemove", event2);
     }
     simulateMousemove(event2) {
@@ -5675,33 +5690,44 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     }
     mouseout(event2) {
       event2.from = eventFrom(event2);
+      if (event2.from !== "mouse")
+        return;
       this.events.emit("cursor-changed", { visible: false });
       this.propagate("mouseout", event2);
     }
     mouseup(event2) {
       event2.from = eventFrom(event2);
+      if (event2.from !== "mouse")
+        return;
       this.drug = null;
-      this.events.emit("cursor-locked", false);
+      if (Date.now() - mDownStart > 750)
+        blockNextClick = true;
+      this.events.emit("mouseup", false);
       this.propagate("mouseup", event2);
     }
     simulateMouseup(event2) {
       event2.from = eventFrom(event2);
       if (event2.from === "mouse")
         return;
+      this.drug = null;
       this.events.emit("mouseup", this.touch2mouse(event2));
       this.propagate("mouseup", this.touch2mouse(event2));
     }
     mousedown(event2) {
       event2.from = eventFrom(event2);
-      this.propagate("mousedown", event2);
+      if (event2.from !== "mouse")
+        return;
       if (event2.defaultPrevented)
         return;
-      this.events.emit("grid-mousedown", [this.gridId, event2]);
+      mDownStart = Date.now();
+      this.events.emit("mousedown", event2);
+      this.propagate("mousedown", event2);
     }
     simulateMousedown(event2) {
       event2.from = eventFrom(event2);
       if (event2.from === "mouse")
         return;
+      mDownStart = Date.now();
       this.events.emit("mousedown", this.touch2mouse(event2));
       this.propagate("mousedown", this.touch2mouse(event2));
     }
