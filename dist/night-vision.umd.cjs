@@ -1,4 +1,4 @@
-/* NightVisionCharts v0.3.4 | License: MIT
+/* NightVisionCharts v0.3.5 | License: MIT
  © 2022 ChartMaster. All rights reserved */
 (function(global, factory) {
   typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.NightVision = {}));
@@ -130,14 +130,14 @@
   function empty() {
     return text("");
   }
-  function listen(node, event, handler, options) {
-    node.addEventListener(event, handler, options);
-    return () => node.removeEventListener(event, handler, options);
+  function listen(node, event2, handler, options) {
+    node.addEventListener(event2, handler, options);
+    return () => node.removeEventListener(event2, handler, options);
   }
   function stop_propagation(fn) {
-    return function(event) {
-      event.stopPropagation();
-      return fn.call(this, event);
+    return function(event2) {
+      event2.stopPropagation();
+      return fn.call(this, event2);
     };
   }
   function attr(node, attribute, value) {
@@ -1180,12 +1180,12 @@
       return delta;
     },
     // Parse the original mouse event to find deltaX
-    getDeltaX(event) {
-      return event.originalEvent.deltaX / 12;
+    getDeltaX(event2) {
+      return event2.originalEvent.deltaX / 12;
     },
     // Parse the original mouse event to find deltaY
-    getDeltaY(event) {
-      return event.originalEvent.deltaY / 12;
+    getDeltaY(event2) {
+      return event2.originalEvent.deltaY / 12;
     },
     // Apply opacity to a hex color
     applyOpacity(c, op) {
@@ -1311,11 +1311,11 @@
     xMode() {
       return this.is_mobile ? "explore" : "default";
     },
-    defaultPrevented(event) {
-      if (event.original) {
-        return event.original.defaultPrevented;
+    defaultPrevented(event2) {
+      if (event2.original) {
+        return event2.original.defaultPrevented;
       }
-      return event.defaultPrevented;
+      return event2.defaultPrevented;
     },
     // Get a view from the data by the name
     /*view(data, name) {
@@ -1993,23 +1993,23 @@
       return type ? all.filter((x) => x.type === type) : all;
     }
     // Event handlers
-    onScaleIndex(event) {
-      let pane = this.panes()[event.paneId];
+    onScaleIndex(event2) {
+      let pane = this.panes()[event2.paneId];
       if (!pane)
         return;
-      pane.settings.scaleIndex = event.index;
-      pane.settings.scaleSideIdxs = event.sideIdxs;
+      pane.settings.scaleIndex = event2.index;
+      pane.settings.scaleSideIdxs = event2.sideIdxs;
       this.events.emitSpec("chart", "update-layout");
     }
-    onDisplayOv(event) {
-      let pane = this.panes()[event.paneId];
+    onDisplayOv(event2) {
+      let pane = this.panes()[event2.paneId];
       if (!pane)
         return;
-      let ov = pane.overlays[event.ovId];
+      let ov = pane.overlays[event2.ovId];
       if (!ov)
         return;
-      ov.settings.display = event.flag;
-      let llId = `${event.paneId}-${event.ovId}`;
+      ov.settings.display = event2.flag;
+      let llId = `${event2.paneId}-${event2.ovId}`;
       this.events.emitSpec("chart", "update-layout");
       this.events.emitSpec(`ll-${llId}`, "update-ll");
     }
@@ -2168,26 +2168,26 @@
     }
     // EVENT HANDLERS
     // User changed y-range
-    onYTransform(event) {
-      let yts = this.yTransforms[event.gridId] || {};
-      let tx = yts[event.scaleId] || {};
-      yts[event.scaleId] = Object.assign(tx, event);
-      this.yTransforms[event.gridId] = yts;
-      if (event.updateLayout) {
+    onYTransform(event2) {
+      let yts = this.yTransforms[event2.gridId] || {};
+      let tx = yts[event2.scaleId] || {};
+      yts[event2.scaleId] = Object.assign(tx, event2);
+      this.yTransforms[event2.gridId] = yts;
+      if (event2.updateLayout) {
         this.events.emitSpec("chart", "update-layout");
       }
       this.store();
     }
     // User tapped legend & selected the overlay
-    onOverlaySelect(event) {
-      this.selectedOverlay = event.index;
+    onOverlaySelect(event2) {
+      this.selectedOverlay = event2.index;
       this.events.emit("$overlay-select", {
-        index: event.index,
-        ov: this.hub.overlay(...event.index)
+        index: event2.index,
+        ov: this.hub.overlay(...event2.index)
       });
     }
     // User tapped grid (& deselected all overlays)
-    onGridMousedown(event) {
+    onGridMousedown(event2) {
       this.selectedOverlay = void 0;
       this.events.emit("$overlay-select", {
         index: void 0,
@@ -2195,8 +2195,8 @@
       });
     }
     // Overlay/user set lock on scrolling
-    onScrollLock(event) {
-      this.scrollLock = event;
+    onScrollLock(event2) {
+      this.scrollLock = event2;
     }
   }
   let instances$3 = {};
@@ -4819,11 +4819,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
     }
     // Relay an event from iframe postMessage
     // (for the future)
-    async relay(event, just = false) {
+    async relay(event2, just = false) {
       return new Promise((rs, rj) => {
-        this.send(event, event.txKeys);
+        this.send(event2, event2.txKeys);
         if (!just) {
-          this.tasks[event.id] = (res) => {
+          this.tasks[event2.id] = (res) => {
             rs(res);
           };
         }
@@ -5377,6 +5377,121 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.id = null;
     }
   }
+  let recentEventFrom = "key";
+  let recentFocusFrom = recentEventFrom;
+  let recentTouch = false;
+  let recentMouse = false;
+  let recentWindowFocus = false;
+  let recentTouchTimeoutId;
+  const setRecentEventFromTouch = (touchDelay) => {
+    recentTouch = true;
+    recentEventFrom = "touch";
+    window.clearTimeout(recentTouchTimeoutId);
+    recentTouchTimeoutId = window.setTimeout(() => {
+      recentTouch = false;
+    }, touchDelay);
+  };
+  let recentMouseTimeoutId;
+  const setRecentEventFromMouse = () => {
+    recentMouse = true;
+    recentEventFrom = "mouse";
+    window.clearTimeout(recentMouseTimeoutId);
+    recentMouseTimeoutId = window.setTimeout(() => {
+      recentMouse = false;
+    }, 200);
+  };
+  const handleTouchEvent = (touchDelay) => () => setRecentEventFromTouch(touchDelay);
+  const handlePointerEvent = (touchDelay) => (e) => {
+    switch (e.pointerType) {
+      case "mouse":
+        setRecentEventFromMouse();
+        break;
+      case "pen":
+      case "touch":
+        setRecentEventFromTouch(touchDelay);
+        break;
+    }
+  };
+  const handleMouseEvent = () => {
+    if (!recentTouch) {
+      setRecentEventFromMouse();
+    }
+  };
+  const handleKeyEvent = () => {
+    recentEventFrom = "key";
+  };
+  let recentWindowFocusTimeoutId;
+  const handleWindowFocusEvent = (e) => {
+    if (e.target === window || e.target === document) {
+      recentWindowFocus = true;
+      window.clearTimeout(recentWindowFocusTimeoutId);
+      recentWindowFocusTimeoutId = window.setTimeout(() => {
+        recentWindowFocus = false;
+      }, 300);
+    }
+  };
+  const handleDocumentFocusEvent = () => {
+    if (!recentWindowFocus || recentMouse || recentTouch) {
+      recentFocusFrom = recentEventFrom;
+    }
+  };
+  const listenerOptions = { capture: true, passive: true };
+  const documentListeners = [
+    ["touchstart", handleTouchEvent(750)],
+    ["touchend", handleTouchEvent(300)],
+    ["touchcancel", handleTouchEvent(300)],
+    ["pointerenter", handlePointerEvent(300)],
+    ["pointerover", handlePointerEvent(300)],
+    ["pointerout", handlePointerEvent(300)],
+    ["pointerleave", handlePointerEvent(300)],
+    ["pointerdown", handlePointerEvent(750)],
+    ["pointerup", handlePointerEvent(300)],
+    ["pointercancel", handlePointerEvent(300)],
+    ["mouseenter", handleMouseEvent],
+    ["mouseover", handleMouseEvent],
+    ["mouseout", handleMouseEvent],
+    ["mouseleave", handleMouseEvent],
+    ["mousedown", handleMouseEvent],
+    ["mouseup", handleMouseEvent],
+    ["keydown", handleKeyEvent],
+    ["keyup", handleKeyEvent],
+    ["focus", handleDocumentFocusEvent]
+  ];
+  if (typeof window !== "undefined" && typeof document !== "undefined") {
+    documentListeners.forEach(([eventName, eventHandler]) => {
+      document.addEventListener(eventName, eventHandler, listenerOptions);
+    });
+    window.addEventListener("focus", handleWindowFocusEvent, listenerOptions);
+  }
+  const eventFrom = (event2) => {
+    switch (event2.pointerType) {
+      case "mouse":
+        setRecentEventFromMouse();
+        break;
+      case "pen":
+      case "touch":
+        if (!recentTouch) {
+          setRecentEventFromTouch(300);
+        } else {
+          recentEventFrom = "touch";
+        }
+        break;
+    }
+    if (/mouse/.test(event2.type) && !recentTouch) {
+      setRecentEventFromMouse();
+    }
+    if (/touch/.test(event2.type)) {
+      if (!recentTouch) {
+        setRecentEventFromTouch(300);
+      } else {
+        recentEventFrom = "touch";
+      }
+    }
+    if (/focus/.test(event2.type)) {
+      return recentFocusFrom;
+    }
+    return recentEventFrom;
+  };
   class Input {
     async setup(comp) {
       this.MIN_ZOOM = comp.props.config.MIN_ZOOM;
@@ -5416,7 +5531,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       const Hamster = await Promise.resolve().then(() => hamster$1);
       const Hammer = await Promise.resolve().then(() => hammer$1);
       this.hm = Hamster.default(this.canvas);
-      this.hm.wheel((event, delta) => this.mousezoom(-delta * 50, event));
+      this.hm.wheel((event2, delta) => this.mousezoom(-delta * 50, event2));
       let mc = this.mc = new Hammer.Manager(this.canvas);
       let T = Utils.isMobile ? 10 : 0;
       mc.add(new Hammer.Pan({ threshold: T }));
@@ -5424,12 +5539,12 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       mc.add(new Hammer.Pinch({ threshold: 0 }));
       mc.get("pinch").set({ enable: true });
       mc.add(new Hammer.Press());
-      mc.on("tap", (event) => {
+      mc.on("tap", (event2) => {
         if (!Utils.isMobile)
           return;
         this.calcOffset();
-        this.emitCursorCoord(event, { mode: "aim" });
-        this.simulateClick(event);
+        this.emitCursorCoord(event2, { mode: "aim" });
+        this.simulateClick(event2);
         if (this.fade)
           this.fade.stop();
         this.events.emit("cursor-changed", {
@@ -5437,23 +5552,25 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         });
         this.events.emitSpec(this.rrId, "update-rr");
       });
-      mc.on("press", (event) => {
+      mc.on("press", (event2) => {
+        event2.from = eventFrom(event2);
         this.calcOffset();
-        this.emitCursorCoord(event, { mode: "aim" });
-        this.simulateMousedown(event);
-        this.events.emit("press", event);
+        this.emitCursorCoord(event2, { mode: "aim" });
+        this.simulateMousedown(event2);
+        this.events.emit("press", event2);
         console.log("Press event");
         this.events.emitSpec(this.rrId, "update-rr");
       });
-      mc.on("panstart", (event) => {
+      mc.on("panstart", (event2) => {
+        event2.from = eventFrom(event2);
         if (this.cursor.mode === "aim") {
-          return this.emitCursorCoord(event);
+          return this.emitCursorCoord(event2);
         }
         let scaleId = this.layout.scaleIndex;
         let tfrm = this.meta.getYtransform(this.gridId, scaleId);
         this.drug = {
-          x: event.center.x + this.offsetX,
-          y: event.center.y + this.offsetY,
+          x: event2.center.x + this.offsetX,
+          y: event2.center.y + this.offsetY,
           r: this.range.slice(),
           t: this.range[1] - this.range[0],
           o: tfrm ? tfrm.offset || 0 : 0,
@@ -5463,15 +5580,15 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         };
         this.events.emit("cursor-changed", {
           gridId: this.gridId,
-          x: event.center.x + this.offsetX,
-          y: event.center.y + this.offsetY
+          x: event2.center.x + this.offsetX,
+          y: event2.center.y + this.offsetY
         });
       });
-      mc.on("panmove", (event) => {
+      mc.on("panmove", (event2) => {
         if (Utils.isMobile) {
           this.calcOffset();
-          this.emitCursorCoord(event, { mode: "aim" });
-          this.simulateMousemove(event);
+          this.emitCursorCoord(event2, { mode: "aim" });
+          this.simulateMousemove(event2);
         }
         if (this.fade)
           this.fade.stop();
@@ -5479,20 +5596,20 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           return;
         {
           this.mousedrag(
-            this.drug.x + event.deltaX,
-            this.drug.y + event.deltaY
+            this.drug.x + event2.deltaX,
+            this.drug.y + event2.deltaY
           );
         }
         this.events.emitSpec(this.rrId, "update-rr");
       });
-      mc.on("panend", (event) => {
+      mc.on("panend", (event2) => {
         if (!Utils.isMobile)
           return;
         this.calcOffset();
-        this.emitCursorCoord(event, { mode: "aim" });
-        this.simulateMouseup(event);
+        this.emitCursorCoord(event2, { mode: "aim" });
+        this.simulateMouseup(event2);
         if (this.drug) {
-          this.panFade(event);
+          this.panFade(event2);
           this.drug = null;
         }
         this.events.emitSpec(this.rrId, "update-rr");
@@ -5507,85 +5624,89 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       mc.on("pinchend", () => {
         this.pinch = null;
       });
-      mc.on("pinch", (event) => {
+      mc.on("pinch", (event2) => {
         if (this.pinch)
-          this.pinchZoom(event.scale);
+          this.pinchZoom(event2.scale);
       });
       let add = this.canvas.addEventListener;
       add("gesturestart", this.gesturestart);
       add("gesturechange", this.gesturechange);
       add("gestureend", this.gestureend);
     }
-    gesturestart(event) {
-      event.preventDefault();
+    gesturestart(event2) {
+      event2.preventDefault();
     }
-    gesturechange(event) {
-      event.preventDefault();
+    gesturechange(event2) {
+      event2.preventDefault();
     }
-    gestureend(event) {
-      event.preventDefault();
+    gestureend(event2) {
+      event2.preventDefault();
     }
-    click(event) {
-      if (Utils.isMobile)
+    click(event2) {
+      event2.from = eventFrom(event2);
+      this.events.emit("click", event2);
+      this.propagate("click", event2);
+    }
+    simulateClick(event2) {
+      event2.from = eventFrom(event2);
+      if (event2.from === "mouse")
         return;
-      this.events.emit("click", event);
-      this.propagate("click", event);
+      this.events.emit("click", this.touch2mouse(event2));
+      this.propagate("click", this.touch2mouse(event2));
     }
-    simulateClick(event) {
-      console.log("sim click");
-      this.events.emit("click", this.touch2mouse(event));
-      this.propagate("click", this.touch2mouse(event));
-    }
-    mousemove(event) {
-      if (Utils.isMobile)
-        return;
+    mousemove(event2) {
+      event2.from = eventFrom(event2);
       this.events.emit("cursor-changed", {
         visible: true,
         gridId: this.gridId,
-        x: event.layerX,
-        y: event.layerY - 1
+        x: event2.layerX,
+        y: event2.layerY - 1
         // Align with the crosshair
       });
       this.calcOffset();
-      this.propagate("mousemove", event);
+      this.propagate("mousemove", event2);
     }
-    simulateMousemove(event) {
-      console.log("sim mousemove");
-      this.events.emit("mousemove", this.touch2mouse(event));
-      this.propagate("mousemove", this.touch2mouse(event));
-    }
-    mouseout(event) {
-      if (Utils.isMobile)
+    simulateMousemove(event2) {
+      event2.from = eventFrom(event2);
+      if (event2.from === "mouse")
         return;
+      this.events.emit("mousemove", this.touch2mouse(event2));
+      this.propagate("mousemove", this.touch2mouse(event2));
+    }
+    mouseout(event2) {
+      event2.from = eventFrom(event2);
       this.events.emit("cursor-changed", { visible: false });
-      this.propagate("mouseout", event);
+      this.propagate("mouseout", event2);
     }
-    mouseup(event) {
-      if (Utils.isMobile)
-        return;
+    mouseup(event2) {
+      event2.from = eventFrom(event2);
       this.drug = null;
       this.events.emit("cursor-locked", false);
-      this.propagate("mouseup", event);
+      this.propagate("mouseup", event2);
     }
-    simulateMouseup(event) {
-      console.log("sim mouseup");
-      this.events.emit("mouseup", this.touch2mouse(event));
-      this.propagate("mouseup", this.touch2mouse(event));
-    }
-    mousedown(event) {
-      if (Utils.isMobile)
+    simulateMouseup(event2) {
+      event2.from = eventFrom(event2);
+      if (event2.from === "mouse")
         return;
-      this.propagate("mousedown", event);
-      if (event.defaultPrevented)
-        return;
-      this.events.emit("grid-mousedown", [this.gridId, event]);
+      this.events.emit("mouseup", this.touch2mouse(event2));
+      this.propagate("mouseup", this.touch2mouse(event2));
     }
-    simulateMousedown(event) {
-      console.log("sim mousedown");
-      this.events.emit("mousedown", this.touch2mouse(event));
-      this.propagate("mousedown", this.touch2mouse(event));
+    mousedown(event2) {
+      event2.from = eventFrom(event2);
+      this.propagate("mousedown", event2);
+      if (event2.defaultPrevented)
+        return;
+      this.events.emit("grid-mousedown", [this.gridId, event2]);
+    }
+    simulateMousedown(event2) {
+      event2.from = eventFrom(event2);
+      if (event2.from === "mouse")
+        return;
+      this.events.emit("mousedown", this.touch2mouse(event2));
+      this.propagate("mousedown", this.touch2mouse(event2));
     }
     mousedrag(x, y) {
+      event.from = eventFrom(event);
       let dt = this.drug.t * (this.drug.x - x) / this.layout.width;
       let d$ = this.layout.$hi - this.layout.$lo;
       d$ *= (this.drug.y - y) / this.layout.height;
@@ -5615,23 +5736,24 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.range[1] = this.drug.r[1] + dt;
       this.changeRange();
     }
-    mousezoom(delta, event) {
+    mousezoom(delta, event2) {
       var _a;
+      event2.from = eventFrom(event2);
       if (this.wmode !== "pass") {
         if (this.wmode === "click" && !this.oldMeta.activated) {
           return;
         }
-        event.originalEvent.preventDefault();
-        event.preventDefault();
+        event2.originalEvent.preventDefault();
+        event2.preventDefault();
       }
-      event.deltaX = event.deltaX || Utils.getDeltaX(event);
-      event.deltaY = event.deltaY || Utils.getDeltaY(event);
-      if (Math.abs(event.deltaX) > 0) {
+      event2.deltaX = event2.deltaX || Utils.getDeltaX(event2);
+      event2.deltaY = event2.deltaY || Utils.getDeltaY(event2);
+      if (Math.abs(event2.deltaX) > 0) {
         this.trackpad = true;
-        if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) {
+        if (Math.abs(event2.deltaX) >= Math.abs(event2.deltaY)) {
           delta *= 0.1;
         }
-        this.trackpadScroll(event);
+        this.trackpadScroll(event2);
       }
       if (this.trackpad)
         delta *= 0.032;
@@ -5645,8 +5767,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       let k = this.interval / 1e3;
       let diff = delta * k * data2.length;
       let tl = this.props.config.ZOOM_MODE === "tl";
-      if (event.originalEvent.ctrlKey || tl) {
-        let offset = event.originalEvent.offsetX;
+      if (event2.originalEvent.ctrlKey || tl) {
+        let offset = event2.originalEvent.offsetX;
         let diff1 = offset / (this.canvas.width / dpr2 - 1) * diff;
         let diff2 = diff - diff1;
         this.range[0] -= diff1;
@@ -5655,7 +5777,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         this.range[0] -= diff;
       }
       if (tl) {
-        let offset = event.originalEvent.offsetY;
+        let offset = event2.originalEvent.offsetY;
         let diff1 = offset / (this.canvas.height / dpr2 - 1) * 2;
         let diff2 = 2 - diff1;
         let z = diff / (this.range[1] - this.range[0]);
@@ -5680,10 +5802,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       this.range[1] = this.pinch.r[1] + (nt - t) * 0.5;
       this.changeRange();
     }
-    trackpadScroll(event) {
+    trackpadScroll(event2) {
       let dt = this.range[1] - this.range[0];
-      this.range[0] += event.deltaX * dt * 0.011;
-      this.range[1] += event.deltaX * dt * 0.011;
+      this.range[0] += event2.deltaX * dt * 0.011;
+      this.range[1] += event2.deltaX * dt * 0.011;
       this.changeRange();
     }
     calcOffset() {
@@ -5703,15 +5825,15 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         }
       };
     }
-    emitCursorCoord(event, add = {}) {
+    emitCursorCoord(event2, add = {}) {
       this.events.emit("cursor-changed", Object.assign({
         gridId: this.gridId,
-        x: event.center.x + this.offsetX,
-        y: event.center.y + this.offsetY
+        x: event2.center.x + this.offsetX,
+        y: event2.center.y + this.offsetY
         //+ this.layout.offset
       }, add));
     }
-    panFade(event) {
+    panFade(event2) {
       let dt = Utils.now() - this.drug.t0;
       let dx = this.range[1] - this.drug.r[1];
       let v = 42 * dx / dt;
@@ -5749,10 +5871,10 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       );
       this.events.emit("range-changed", range);
     }
-    propagate(name, event) {
+    propagate(name, event2) {
       this.events.emitSpec(this.gridUpdId, "propagate", {
         name,
-        event
+        event: event2
       });
     }
     destroy() {
@@ -5783,22 +5905,22 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       window.removeEventListener("keyup", this._keyup);
       window.removeEventListener("keypress", this._keypress);
     }
-    keydown(event) {
+    keydown(event2) {
       this.events.emitSpec(this.updId, "propagate", {
         name: "keydown",
-        event
+        event: event2
       });
     }
-    keyup(event) {
+    keyup(event2) {
       this.events.emitSpec(this.updId, "propagate", {
         name: "keyup",
-        event
+        event: event2
       });
     }
-    keypress(event) {
+    keypress(event2) {
       this.events.emitSpec(this.updId, "propagate", {
         name: "keypress",
-        event
+        event: event2
       });
     }
   }
@@ -6261,8 +6383,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       if (id > 0)
         upperBorder2();
     }
-    function onTask(event) {
-      event.handler(canvas, ctx, input);
+    function onTask(event2) {
+      event2.handler(canvas, ctx, input);
     }
     function upperBorder2() {
       ctx.strokeStyle = props.colors.scale;
@@ -6632,7 +6754,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       events.off(`grid-${id}`);
       keyboard.off();
     });
-    function make(event) {
+    function make(event2) {
       if (!hub.panes()[id])
         return;
       destroyLayers();
@@ -6718,15 +6840,15 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       }
     }
     function propagate(e) {
-      let { name, event } = e;
+      let { name, event: event2 } = e;
       for (var layer of layers) {
         if (layer.overlay[name]) {
-          layer.overlay[name](event);
+          layer.overlay[name](event2);
         }
       }
     }
-    function onTask(event) {
-      event.handler(layers, renderers, { update: update2 });
+    function onTask(event2) {
+      event2.handler(layers, renderers, { update: update2 });
     }
     function canvas_binding($$value, each_value, i) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
@@ -7329,7 +7451,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         taps: 2,
         posThreshold: 50
       }));
-      mc.on("panstart", (event) => {
+      mc.on("panstart", (event2) => {
         if (!scale)
           return;
         let yTransform = getYtransform();
@@ -7340,16 +7462,16 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         }
         yRange = [scale.$hi, scale.$lo];
         drug = {
-          y: event.center.y,
+          y: event2.center.y,
           z: zoom,
           mid: math.log_mid(yRange, layout.height),
           A: scale.A,
           B: scale.B
         };
       });
-      mc.on("panmove", (event) => {
+      mc.on("panmove", (event2) => {
         if (drug) {
-          zoom = calcZoom(event);
+          zoom = calcZoom(event2);
           events.emit("sidebar-transform", {
             gridId: id,
             scaleId: scale.scaleSpecs.id,
@@ -7417,8 +7539,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       dpr.resize(canvas, ctx, layout.sbMax[S], layout.height);
       update2();
     }
-    function calcZoom(event) {
-      let d = drug.y - event.center.y;
+    function calcZoom(event2) {
+      let d = drug.y - event2.center.y;
       let speed = d > 0 ? 3 : 1;
       let k = 1 + speed * d / layout.height;
       return Utils.clamp(drug.z * k, 5e-3, 100);
@@ -8780,7 +8902,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
       events.emit("select-overlay", { index: [gridId, ov.id] });
       $$invalidate(25, selected = true);
     }
-    function onDeselect(event) {
+    function onDeselect(event2) {
       $$invalidate(25, selected = false);
     }
     function formatter(x, $prec = prec) {
@@ -11339,8 +11461,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             if (!originalEvent) {
               originalEvent = window2.event;
             }
-            var event = Hamster.normalise.event(originalEvent), delta = Hamster.normalise.delta(originalEvent);
-            return originalHandler(event, delta[0], delta[1], delta[2]);
+            var event2 = Hamster.normalise.event(originalEvent), delta = Hamster.normalise.delta(originalEvent);
+            return originalHandler(event2, delta[0], delta[1], delta[2]);
           };
           hamster2.element[Hamster.ADD_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
           hamster2.handlers.push({
@@ -11395,7 +11517,7 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
          * @returns {Object}      event
          */
         event: function normaliseEvent(originalEvent) {
-          var event = {
+          var event2 = {
             // keep a reference to the original event object
             originalEvent,
             target: originalEvent.target || originalEvent.srcElement,
@@ -11419,15 +11541,15 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             }
           };
           if (originalEvent.wheelDelta) {
-            event.deltaY = -1 / 40 * originalEvent.wheelDelta;
+            event2.deltaY = -1 / 40 * originalEvent.wheelDelta;
           }
           if (originalEvent.wheelDeltaX) {
-            event.deltaX = -1 / 40 * originalEvent.wheelDeltaX;
+            event2.deltaX = -1 / 40 * originalEvent.wheelDeltaX;
           }
           if (originalEvent.detail) {
-            event.deltaY = originalEvent.detail;
+            event2.deltaY = originalEvent.detail;
           }
-          return event;
+          return event2;
         },
         /**
          * normalise 'deltas' of the mouse wheel
@@ -12441,8 +12563,8 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
         emit: function(input) {
           var self2 = this;
           var state = this.state;
-          function emit(event) {
-            self2.manager.emit(event, input);
+          function emit(event2) {
+            self2.manager.emit(event2, input);
           }
           if (state < STATE_ENDED) {
             emit(self2.options.event + stateStr(state));
@@ -13141,9 +13263,9 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             return;
           }
           var handlers = this.handlers;
-          each(splitStr(events), function(event) {
-            handlers[event] = handlers[event] || [];
-            handlers[event].push(handler);
+          each(splitStr(events), function(event2) {
+            handlers[event2] = handlers[event2] || [];
+            handlers[event2].push(handler);
           });
           return this;
         },
@@ -13158,11 +13280,11 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
             return;
           }
           var handlers = this.handlers;
-          each(splitStr(events), function(event) {
+          each(splitStr(events), function(event2) {
             if (!handler) {
-              delete handlers[event];
+              delete handlers[event2];
             } else {
-              handlers[event] && handlers[event].splice(inArray(handlers[event], handler), 1);
+              handlers[event2] && handlers[event2].splice(inArray(handlers[event2], handler), 1);
             }
           });
           return this;
@@ -13172,15 +13294,15 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
          * @param {String} event
          * @param {Object} data
          */
-        emit: function(event, data2) {
+        emit: function(event2, data2) {
           if (this.options.domEvents) {
-            triggerDomEvent(event, data2);
+            triggerDomEvent(event2, data2);
           }
-          var handlers = this.handlers[event] && this.handlers[event].slice();
+          var handlers = this.handlers[event2] && this.handlers[event2].slice();
           if (!handlers || !handlers.length) {
             return;
           }
-          data2.type = event;
+          data2.type = event2;
           data2.preventDefault = function() {
             data2.srcEvent.preventDefault();
           };
@@ -13221,9 +13343,9 @@ If not the case just use 'lite' tag: ${VERSION}-lite`
           manager.oldCssProps = {};
         }
       }
-      function triggerDomEvent(event, data2) {
+      function triggerDomEvent(event2, data2) {
         var gestureEvent = document2.createEvent("Event");
-        gestureEvent.initEvent(event, true, true);
+        gestureEvent.initEvent(event2, true, true);
         gestureEvent.gesture = data2;
         data2.target.dispatchEvent(gestureEvent);
       }

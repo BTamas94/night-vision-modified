@@ -11,6 +11,7 @@ import math from '../../stuff/math.js'
 import Events from '../events.js'
 import DataHub from '../dataHub.js'
 import MetaHub from '../metaHub.js'
+import { eventFrom } from 'event-from';
 
 export default class Input {
 
@@ -91,8 +92,7 @@ export default class Input {
             })
         
         mc.on('press', event => {
-            // if (!Utils.isMobile) return
-            
+            event.from = eventFrom(event)
             this.calcOffset()
             this.emitCursorCoord(event, { mode: 'aim' })
             this.simulateMousedown(event)
@@ -104,7 +104,7 @@ export default class Input {
         })
 
         mc.on('panstart', event => {
-
+            event.from = eventFrom(event)
             if (this.cursor.mode === 'aim') {
                 return this.emitCursorCoord(event)
             }
@@ -196,19 +196,20 @@ export default class Input {
     gestureend(event) { event.preventDefault() }
 
     click(event) {
-        if (Utils.isMobile) return
+        event.from = eventFrom(event)
         this.events.emit("click", event)
         this.propagate('click', event)
     }
 
     simulateClick(event) {
-        console.log("sim click")
+        event.from = eventFrom(event)
+        if(event.from === "mouse") return
         this.events.emit("click", this.touch2mouse(event))
         this.propagate('click', this.touch2mouse(event))
     }
 
     mousemove(event) {
-        if (Utils.isMobile) return
+        event.from = eventFrom(event)
         this.events.emit('cursor-changed', {
             visible: true,
             gridId: this.gridId,
@@ -219,45 +220,48 @@ export default class Input {
         this.propagate('mousemove', event)
     }
     simulateMousemove(event) {
-        console.log("sim mousemove")
+        event.from = eventFrom(event)
+        if(event.from === "mouse") return
         this.events.emit("mousemove", this.touch2mouse(event))
         this.propagate('mousemove', this.touch2mouse(event))
     }
 
     mouseout(event) {
-        if (Utils.isMobile) return
+        event.from = eventFrom(event)
         this.events.emit('cursor-changed', { visible: false })
         this.propagate('mouseout', event)
     }
 
     mouseup(event) {
-        if (Utils.isMobile) return
+        event.from = eventFrom(event)
         this.drug = null
         this.events.emit('cursor-locked', false)
         this.propagate('mouseup', event)
     }
     simulateMouseup(event) {
-        console.log("sim mouseup")
+        event.from = eventFrom(event)
+        if(event.from === "mouse") return
         this.events.emit("mouseup", this.touch2mouse(event))
         this.propagate('mouseup', this.touch2mouse(event))
     }
     
 
     mousedown(event) {
-        if (Utils.isMobile) return
+        event.from = eventFrom(event)
         this.propagate('mousedown', event)
         if (event.defaultPrevented) return
         this.events.emit('grid-mousedown', [this.gridId, event])
     }
 
     simulateMousedown(event) {
-        console.log("sim mousedown")
+        event.from = eventFrom(event)
+        if(event.from === "mouse") return
         this.events.emit("mousedown", this.touch2mouse(event))
         this.propagate('mousedown', this.touch2mouse(event))
     }
 
     mousedrag(x, y) {
-
+        event.from = eventFrom(event)
         let dt = this.drug.t * (this.drug.x - x) / this.layout.width
         let d$ = this.layout.$hi - this.layout.$lo
         d$ *= (this.drug.y - y) / this.layout.height
@@ -296,7 +300,7 @@ export default class Input {
     }
 
     mousezoom(delta, event) {
-
+        event.from = eventFrom(event)
         // TODO: for mobile
         if (this.wmode !== 'pass') {
             if (this.wmode === 'click' && !this.oldMeta.activated) {

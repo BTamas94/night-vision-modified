@@ -1,4 +1,4 @@
-/* NightVisionCharts v0.3.4 | License: MIT
+/* NightVisionCharts v0.3.5 | License: MIT
  © 2022 ChartMaster. All rights reserved */
 (function() {
   "use strict";
